@@ -349,4 +349,100 @@ else:
             hide_index=True
         )
 
-# Step 3: 
+# Step 3: AI Pricing Recommendation
+st.markdown("---")
+st.markdown('<div class="step-header">Step 3 — AI Pricing Recommendations</div>', unsafe_allow_html=True)
+
+if "df" not in st.session_state or "classification" not in st.session_state["df"].columns:
+    st.warning("⚠️ Please complete Step 2 first.")
+elif not llm:
+    st.error("❌ Please enter your OpenAI API key in the sidebar.")
+else:
+    if st.button("🤖 Generate Recommendations"):
+        df = st.session_state["df"]
+        menu_summary = df[["item_name", "category", "current_price",
+                            "food_cost", "margin_pct",
+                            "monthly_units_sold", "classification"]
+                         ].to_string(index=False)
+
+        with st.spinner("Analysing your menu with AI..."):
+            messages = [
+                SystemMessage(content="""You are an expert restaurant consultant 
+specialising in menu engineering and pricing strategy.
+
+Analyse the menu data and return ONLY a valid JSON array.
+Each object must have exactly these fields:
+{
+    "item_name": "<exact name from data>",
+    "classification": "<classification from data>",
+    "current_price": <number>,
+    "recommended_price": <number>,
+    "action": "<one of: Promote / Reprice / Reposition / Remove / Keep>",
+    "reasoning": "<2 sentence plain English explanation>",
+    "projected_monthly_impact": "<e.g. +£120/month or Neutral>"
+}
+
+Rules:
+- Stars: keep price, action = Promote
+- Puzzles: reduce price slightly or reposition, action = Reposition
+- Plowhorses: increase price 10-20%, action = Reprice
+- Dogs: recommend removal, action = Remove
+- Ideal food cost % is 28-35% of selling price
+- Be specific with numbers in reasoning
+
+Return ONLY the JSON array. No markdown, no code fences, no explanation."""),
+                HumanMessage(content=f"Analyse this menu:\n\n{menu_summary}")
+            ]
+
+            try:
+                response = llm.invoke(messages).content.strip()
+                response = re.sub(r"^```(?:json)?", "", response).strip()
+                response = re.sub(r"```$", "", response).strip()
+                recommendations = json.loads(response)
+                st.session_state["recommendations"] = recommendations
+                st.success("✅ Recommendations generated!")
+            except Exception as e:
+                st.error(f"Failed to parse AI response: {e}")
+
+    if "recommendations" in st.session_state:
+        recommendations = st.session_state["recommendations"]
+
+        action_colors = {
+            "Promote":    "#2ECC71",
+            "Reprice":    "#F39C12",
+            "Reposition": "#3498DB",
+            "Remove":     "#E74C3C",
+            "Keep":       "#95A5A6"
+        }
+
+        action_icons = {
+            "Promote":    "📈",
+            "Reprice":    "💰",
+            "Reposition": "🔀",
+            "Remove":     "🗑️",
+            "Keep":       "✅"
+        }
+        for rec in recommendations:
+            action = rec.get("action", "Keep")
+            color  = action_colors.get(action, "#95A5A6")
+            icon   = action_icons.get(action, "✅")
+            curr   = rec.get("current_price", 0)
+            recp   = rec.get("recommended_price", 0)
+            price_change = f"£{curr:.2f} → £{recp:.2f}" if curr != recp else f"£{curr:.2f} (no change)"
+
+            with st.container():
+                st.markdown(f"""
+<div style="border-left: 4px solid {color}; padding: 0.6rem 1rem; 
+            margin-bottom: 0.8rem; background: white; border-radius: 0 8px 8px 0;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
+    <strong>{rec.get('item_name', '')}</strong> &nbsp;
+    <span style="background:{color}; color:white; padding:2px 8px; 
+                 border-radius:4px; font-size:0.8rem;">{icon} {action}</span>
+    &nbsp; <span style="color:#666; font-size:0.85rem;">{rec.get('classification','')}</span><br/>
+    <span style="font-size:0.9rem;">💷 {price_change} &nbsp;|&nbsp; 
+    📊 {rec.get('projected_monthly_impact','N/A')}</span><br/>
+    <span style="color:#555; font-size:0.85rem;">{rec.get('reasoning','')}</span>
+</div>
+""", unsafe_allow_html=True)
+                
+
