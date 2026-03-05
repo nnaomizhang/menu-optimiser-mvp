@@ -165,9 +165,13 @@ def generate_pdf(df, recommendations, summary):
         reasoning = clean_text(str(rec.get("reasoning", "")))
         pdf.multi_cell(0, 6, f"  {reasoning}")
         pdf.ln(1)
-
+    
+    # Fixed
     output = pdf.output(dest="S")
-    return output if isinstance(output, bytes) else output.encode("latin-1")
+    if isinstance(output, (bytes, bytearray)):
+        return bytes(output)
+    return output.encode("latin-1")
+
 
 # Step 1: Upload and Validation ─────────────────────────────────────────────────────────────
 st.markdown('<div class="step-header">Step 1 — Upload & Validate Menu Data</div>', unsafe_allow_html=True)
