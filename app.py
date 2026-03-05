@@ -10,7 +10,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from fpdf import FPDF
 
-#Page Configuration
+# Page Configuration
 st.set_page_config(
     page_title="Restaurant Menu Optimiser",
     page_icon="🍽️",
@@ -18,4 +18,12 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Progression Bar
+steps_complete = sum([
+    "df" in st.session_state,
+    "classification" in st.session_state.get("df", {}).columns if "df" in st.session_state else False,
+    "recommendations" in st.session_state,
+    "pdf" in st.session_state
+])
+st.progress(steps_complete / 4, text=f"Progress: {steps_complete}/4 steps complete")
 
