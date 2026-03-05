@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Menu Optimiser MVP
 
 An AI-powered restaurant menu optimisation tool built with Streamlit and GPT-4.
@@ -24,3 +25,7 @@ streamlit run app.py
 - current_price
 - food_cost
 - monthly_units_sold
+=======
+# menu-optimiser-mvp
+MSIN0231 Group Coursework: AI Restaurant Menu Optimiser
+>>>>>>> b53f266b5321bc3a84d90569a4d9aa8e06c6cc40
