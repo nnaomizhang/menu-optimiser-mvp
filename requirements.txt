@@ -1,0 +1,7 @@
+streamlit
+langchain-openai
+pandas
+plotly
+fpdf2
+openpyxl
+python-dotenv
