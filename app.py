@@ -10,6 +10,8 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from fpdf import FPDF
 
+# Step 0: Set-up
+
 # Page Configuration
 st.set_page_config(
     page_title="Restaurant Menu Optimiser",
@@ -124,3 +126,63 @@ def generate_pdf(df, recommendations, summary):
         
     output = pdf.output(dest="S")
     return output if isinstance(output, bytes) else output.encode("latin-1")
+
+# Step 1: Upload and Validation
+st.markdown('<div class="step-header">Step 1 — Upload & Validate Menu Data</div>', unsafe_allow_html=True)
+
+uploaded_file = st.file_uploader(
+    "Upload your menu spreadsheet",
+    type=["csv", "xlsx"],
+    help="Must contain: item_name, category, current_price, food_cost, monthly_units_sold"
+)
+
+if st.button("✅ Validate Data", disabled=uploaded_file is None):
+    try:
+        if uploaded_file.name.endswith(".csv"):
+            df_raw = pd.read_csv(uploaded_file)
+        else:
+            df_raw = pd.read_excel(uploaded_file)
+
+        required_cols = ["item_name", "category", "current_price",
+                         "food_cost", "monthly_units_sold"]
+        missing = [c for c in required_cols if c not in df_raw.columns]
+
+        if missing:
+            st.error(f"❌ Missing columns: {missing}")
+            st.info("Please check your spreadsheet has the correct column names.")
+        else:
+            # Calculate derived metrics
+            df_raw["gross_margin"]    = df_raw["current_price"] - df_raw["food_cost"]
+            df_raw["margin_pct"]      = (df_raw["gross_margin"] / df_raw["current_price"]) * 100
+            df_raw["monthly_revenue"] = df_raw["current_price"] * df_raw["monthly_units_sold"]
+            df_raw["monthly_profit"]  = df_raw["gross_margin"]  * df_raw["monthly_units_sold"]
+
+            st.session_state["df"] = df_raw
+            st.session_state.pop("recommendations", None)
+            st.session_state.pop("summary", None)
+            st.success(f"✅ Data validated — {len(df_raw)} menu items loaded.")
+
+    except Exception as e:
+        st.error(f"Failed to read file: {e}")
+        
+if "df" in st.session_state:
+    df = st.session_state["df"]
+
+    # Summary metrics
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Total Items",        len(df))
+    col2.metric("Monthly Revenue",    f"£{df['monthly_revenue'].sum():,.2f}")
+    col3.metric("Monthly Profit",     f"£{df['monthly_profit'].sum():,.2f}")
+    col4.metric("Avg Margin",         f"{df['margin_pct'].mean():.1f}%")
+
+    st.dataframe(
+        df[["item_name", "category", "current_price", "food_cost",
+            "margin_pct", "monthly_units_sold", "monthly_profit"]]
+        .rename(columns={
+            "item_name": "Item", "category": "Category",
+            "current_price": "Price (£)", "food_cost": "Food Cost (£)",
+            "margin_pct": "Margin %", "monthly_units_sold": "Units/Month",
+            "monthly_profit": "Monthly Profit (£)"
+        }),
+        use_container_width=True
+    )
