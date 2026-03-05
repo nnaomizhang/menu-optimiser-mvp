@@ -445,4 +445,77 @@ Return ONLY the JSON array. No markdown, no code fences, no explanation."""),
 </div>
 """, unsafe_allow_html=True)
                 
+# Step 4: Generate a Report ──────────────────────────────────────────
+# ════════════════════════════════════════════════════════════════════════════
+# STEP 4 — REPORT GENERATION
+# ════════════════════════════════════════════════════════════════════════════
+st.markdown("---")
+st.markdown('<div class="step-header">Step 4 — Download Full Report</div>', unsafe_allow_html=True)
+
+if "recommendations" not in st.session_state:
+    st.warning("⚠️ Please complete Step 3 first.")
+elif not llm:
+    st.error("❌ Please enter your OpenAI API key in the sidebar.")
+else:
+    if st.button("📄 Generate PDF Report"):
+        df = st.session_state["df"]
+        recommendations = st.session_state["recommendations"]
+
+        with st.spinner("Generating your report..."):
+            summary_messages = [
+                SystemMessage(content="""You are a senior restaurant business consultant.
+Write a concise 3-4 sentence executive summary of this menu analysis.
+Then write exactly 3 priority actions the restaurant should take this week.
+Be specific with numbers. Plain English. No jargon. No bullet symbols.
+Use the terms Signature, Speciality, Staple and Marginal when referring to menu classifications."""),
+                HumanMessage(content=f"""
+Menu classifications: {df['classification'].value_counts().to_dict()}
+Total monthly revenue: £{df['monthly_revenue'].sum():.2f}
+Total monthly profit: £{df['monthly_profit'].sum():.2f}
+Average margin: {df['margin_pct'].mean():.1f}%
+Number of Marginal items: {len(df[df['classification'] == 'Marginal'])}
+Number of Signature items: {len(df[df['classification'] == 'Signature'])}
+Number of Speciality items: {len(df[df['classification'] == 'Speciality'])}
+Number of Staple items: {len(df[df['classification'] == 'Staple'])}
+Recommendations summary: {json.dumps(recommendations[:5])}
+
+Write the executive summary and top 3 priority actions.""")
+            ]
+
+            try:
+                summary = llm.invoke(summary_messages).content.strip()
+                st.session_state["summary"] = summary
+
+                pdf_data = generate_pdf(df, recommendations, summary)
+                st.session_state["pdf"] = pdf_data
+                st.success("✅ Report ready!")
+
+            except Exception as e:
+                st.error(f"Failed to generate report: {e}")
+
+    if "pdf" in st.session_state:
+
+        # Executive summary preview
+        if "summary" in st.session_state:
+            st.markdown("### Executive Summary")
+            st.info(st.session_state["summary"])
+
+        # Classification breakdown preview
+        if "df" in st.session_state:
+            df = st.session_state["df"]
+            st.markdown("### Classification Breakdown")
+            col1, col2, col3, col4 = st.columns(4)
+            counts = df["classification"].value_counts()
+            col1.metric("Signature",  counts.get("Signature",  0))
+            col2.metric("Speciality", counts.get("Speciality", 0))
+            col3.metric("Staple",     counts.get("Staple",     0))
+            col4.metric("Marginal",   counts.get("Marginal",   0))
+
+        # Download button
+        st.download_button(
+            label="⬇️ Download Menu Optimisation Report (PDF)",
+            data=st.session_state["pdf"],
+            file_name="menu_optimisation_report.pdf",
+            mime="application/pdf"
+        )
 
