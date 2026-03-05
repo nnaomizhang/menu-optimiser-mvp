@@ -127,7 +127,7 @@ def generate_pdf(df, recommendations, summary):
     output = pdf.output(dest="S")
     return output if isinstance(output, bytes) else output.encode("latin-1")
 
-# Step 1: Upload and Validation
+# Step 1: Upload and Validation ─────────────────────────────────────────────────────────────
 st.markdown('<div class="step-header">Step 1 — Upload & Validate Menu Data</div>', unsafe_allow_html=True)
 
 uploaded_file = st.file_uploader(
@@ -186,3 +186,167 @@ if "df" in st.session_state:
         }),
         use_container_width=True
     )
+
+# Step 2: Menu Analysis ─────────────────────────────────────────────────────────────
+st.markdown("---")
+st.markdown('<div class="step-header">Step 2 — Menu Engineering Analysis</div>', unsafe_allow_html=True)
+
+if "df" not in st.session_state:
+    st.warning("⚠️ Please complete Step 1 first.")
+else:
+    if st.button("📊 Analyse Menu"):
+        df = st.session_state["df"]
+
+        median_margin = df["margin_pct"].median()
+        median_units  = df["monthly_units_sold"].median()
+
+        def classify(row):
+            hm = row["margin_pct"]         >= median_margin
+            hs = row["monthly_units_sold"] >= median_units
+            if hm and hs:     return "Signature"
+            if hm and not hs: return "Speciality"
+            if not hm and hs: return "Staple"
+            return "Marginal"
+
+        df["classification"] = df.apply(classify, axis=1)
+        st.session_state["df"] = df
+
+    if "classification" in st.session_state["df"].columns:
+        df = st.session_state["df"]
+
+        # ── Classification Count Metrics ──────────────────────────────────
+        counts = df["classification"].value_counts()
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Signature",  counts.get("Signature",  0), help="High margin, high volume — your best performers")
+        col2.metric("Speciality", counts.get("Speciality", 0), help="High margin, low volume — hidden potential")
+        col3.metric("Staple",     counts.get("Staple",     0), help="Low margin, high volume — pricing opportunity")
+        col4.metric("Marginal",   counts.get("Marginal",   0), help="Low margin, low volume — candidates for removal")
+
+        # ── Color Map ─────────────────────────────────────────────────────
+        color_map = {
+            "Signature":  "#2ECC71",
+            "Speciality": "#3498DB",
+            "Staple":     "#F39C12",
+            "Marginal":   "#E74C3C"
+        }
+
+        # ── Scatter Plot Matrix ───────────────────────────────────────────
+        fig = px.scatter(
+            df,
+            x="monthly_units_sold",
+            y="margin_pct",
+            color="classification",
+            color_discrete_map=color_map,
+            text="item_name",
+            size="monthly_profit",
+            title="Menu Performance Matrix",
+            labels={
+                "monthly_units_sold": "Monthly Units Sold  (Popularity →)",
+                "margin_pct":         "Gross Margin %  (Profitability ↑)",
+                "classification":     "Classification"
+            },
+            template="plotly_white"
+        )
+
+        median_margin = df["margin_pct"].median()
+        median_units  = df["monthly_units_sold"].median()
+
+        fig.add_hline(
+            y=median_margin,
+            line_dash="dash",
+            line_color="#AAAAAA",
+            opacity=0.6,
+            annotation_text="Median Margin",
+            annotation_position="right"
+        )
+        fig.add_vline(
+            x=median_units,
+            line_dash="dash",
+            line_color="#AAAAAA",
+            opacity=0.6,
+            annotation_text="Median Volume",
+            annotation_position="top"
+        )
+
+        # Quadrant labels
+        x_max = df["monthly_units_sold"].max() * 1.1
+        y_max = df["margin_pct"].max() * 1.05
+        x_min = df["monthly_units_sold"].min() * 0.9
+        y_min = df["margin_pct"].min() * 0.95
+
+        quadrant_labels = [
+            dict(x=(x_min + median_units) / 2,  y=y_max * 0.97, text="SPECIALITY",  color="#3498DB"),
+            dict(x=(median_units + x_max) / 2,  y=y_max * 0.97, text="SIGNATURE",   color="#2ECC71"),
+            dict(x=(x_min + median_units) / 2,  y=y_min * 1.05, text="MARGINAL",    color="#E74C3C"),
+            dict(x=(median_units + x_max) / 2,  y=y_min * 1.05, text="STAPLE",      color="#F39C12"),
+        ]
+
+        for ql in quadrant_labels:
+            fig.add_annotation(
+                x=ql["x"], y=ql["y"],
+                text=ql["text"],
+                showarrow=False,
+                font=dict(size=11, color=ql["color"], family="Georgia, serif"),
+                opacity=0.4
+            )
+
+        fig.update_traces(
+            textposition="top center",
+            marker=dict(opacity=0.85, line=dict(width=1, color="white")),
+            textfont=dict(size=10)
+        )
+        fig.update_layout(
+            height=520,
+            legend_title="Classification",
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1
+            ),
+            font=dict(family="Georgia, serif"),
+            plot_bgcolor="#FAFAF8",
+            paper_bgcolor="#FAFAF8",
+            title=dict(font=dict(size=16, family="Georgia, serif"))
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
+        # ── Classification Guide ──────────────────────────────────────────
+        with st.expander("ℹ️ Classification Guide"):
+            st.markdown("""
+| Classification | Definition | Recommended Action |
+|---|---|---|
+| **Signature** | High margin + High volume | Protect price, feature prominently on menu |
+| **Speciality** | High margin + Low volume | Reposition, improve description, consider promotion |
+| **Staple** | Low margin + High volume | Review pricing, consider portion or cost adjustment |
+| **Marginal** | Low margin + Low volume | Evaluate for removal or full rework |
+
+*Based on Menu Engineering methodology — Kasavana & Smith (1982)*
+            """)
+
+        # ── Classification Table ──────────────────────────────────────────
+        st.markdown("### Item Classifications")
+        st.dataframe(
+            df[["item_name", "category", "current_price",
+                "margin_pct", "monthly_units_sold", "classification"]]
+            .sort_values("classification")
+            .rename(columns={
+                "item_name":           "Item",
+                "category":            "Category",
+                "current_price":       "Price (£)",
+                "margin_pct":          "Margin %",
+                "monthly_units_sold":  "Units / Month",
+                "classification":      "Classification"
+            })
+            .style.applymap(
+                lambda v: f"color: {color_map.get(v, 'black')}; font-weight: bold"
+                if v in color_map else "",
+                subset=["Classification"]
+            ),
+            use_container_width=True,
+            hide_index=True
+        )
+
+# Step 3: 
