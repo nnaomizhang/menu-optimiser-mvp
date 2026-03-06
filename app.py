@@ -267,8 +267,26 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Restaurant Name
+# Introduce Context
 if "restaurant_name" not in st.session_state:
+    st.markdown("""
+<div style="
+    max-width: 580px;
+    margin: 0 auto 2rem auto;
+    text-align: center;
+">
+    <p style="font-size: 0.95rem; color: #7A7060; line-height: 1.8; font-family: 'DM Sans', sans-serif;">
+        MenuMind analyses your menu's sales and cost data to classify every item 
+        by profitability and popularity — then generates AI-powered pricing recommendations 
+        and a downloadable report in minutes.
+    </p>
+    <p style="font-size: 0.8rem; color: #A09880; font-family: 'DM Sans', sans-serif;">
+        You'll need a spreadsheet with your item names, prices, food costs, and monthly sales. 
+        The whole process takes under 2 minutes.
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
     restaurant_name = st.text_input(
         "Enter your restaurant name to get started",
         placeholder="e.g. The Paradosiako",
