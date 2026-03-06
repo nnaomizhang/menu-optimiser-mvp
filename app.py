@@ -125,7 +125,7 @@ p, li, label {
 }
 
 .stButton > button {
-    background: var(--navy) !important;
+    background: var(--bg-3) !important;
     color: var(--bg) !important;
     border: none !important;
     border-radius: 6px !important;
@@ -146,8 +146,8 @@ p, li, label {
 }
 .stDownloadButton > button {
     background: transparent !important;
-    color: var(--navy) !important;
-    border: 1px solid var(--navy) !important;
+    color: var(--bg-3) !important;
+    border: 1px solid var(--bg-3) !important;
     border-radius: 6px !important;
     padding: 0.55rem 1.6rem !important;
     font-family: 'DM Sans', sans-serif !important;
@@ -169,7 +169,7 @@ p, li, label {
     transition: border-color 0.2s ease !important;
 }
 [data-testid="stFileUploader"]:hover {
-    border-color: var(--navy) !important;
+    border-color: var(---bg-3) !important;
     background: var(--bg-3) !important;
 }
 
