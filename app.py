@@ -272,9 +272,14 @@ restaurant_name = st.text_input(
     "Enter your restaurant name to get started",
     placeholder="e.g. The Paradosiako",
 )
-st.session_state["restaurant_name"] = restaurant_name
+if st.button("Continue →"):
+    if not restaurant_name:
+        st.warning("Please enter your restaurant name to continue.")
+        st.stop()
+    else:
+        st.session_state["restaurant_name"] = restaurant_name
 
-if not restaurant_name:
+if "restaurant_name" not in st.session_state:
     st.stop()
 
 # PDF Generator 
