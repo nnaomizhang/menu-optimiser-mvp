@@ -56,247 +56,69 @@ st.sidebar.markdown("""
 # ── Custom Styling ────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-import streamlit as st
-import os
-import json
-import re
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage, SystemMessage
-from fpdf import FPDF
-
-# ── Page Config ───────────────────────────────────────────────────────────────
-st.set_page_config(
-    page_title="MenuMind — AI Menu Optimiser",
-    page_icon="🍽️",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
-
-# ── Premium Styling ───────────────────────────────────────────────────────────
-st.markdown("""
-<style>
-
-/* ── Google Fonts ──────────────────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap');
 
-/* ── CSS Variables ─────────────────────────────────────────────────────────── */
 :root {
-    --gold:        #C9A84C;
-    --gold-light:  #E8C96A;
-    --gold-dim:    rgba(201,168,76,0.15);
-    --dark:        #0D0D0D;
-    --dark-2:      #141414;
-    --dark-3:      #1C1C1C;
-    --dark-4:      #252525;
-    --cream:       #F5F0E8;
-    --cream-dim:   rgba(245,240,232,0.6);
-    --muted:       #888880;
-    --green:       #4CAF82;
-    --amber:       #D4943A;
-    --red:         #C0574A;
-    --blue:        #4A90C0;
+    --gold:       #C9A84C;
+    --gold-light: #E8C96A;
+    --gold-dim:   rgba(201,168,76,0.15);
+    --dark:       #0D0D0D;
+    --dark-2:     #141414;
+    --dark-3:     #1C1C1C;
+    --dark-4:     #252525;
+    --cream:      #F5F0E8;
+    --cream-dim:  rgba(245,240,232,0.6);
+    --muted:      #888880;
 }
 
-/* ── Hide Streamlit Chrome ─────────────────────────────────────────────────── */
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-header {visibility: hidden;}
-[data-testid="stToolbar"] {visibility: hidden;}
-[data-testid="stDecoration"] {display: none;}
+/* Remove: .main { background-color: #FAFAF8; } */
+.stApp { background-color: var(--dark); }
+.main  { background-color: transparent; }
 
-/* ── Global Background ─────────────────────────────────────────────────────── */
-.stApp {
-    background-color: var(--dark);
-    background-image:
-        url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+h1 {
+    font-family: 'Playfair Display', serif !important;
+    color: var(--cream) !important;
+    font-size: 2.2rem;
+    letter-spacing: -0.5px;
 }
-
-.main {
-    background-color: transparent;
-}
-
-.block-container {
-    padding-top: 0 !important;
-    padding-bottom: 4rem;
-    max-width: 1080px;
-}
-
-/* ── Typography ────────────────────────────────────────────────────────────── */
-h1, h2, h3, h4 {
-    font-family: 'Playfair Display', Georgia, serif !important;
+h2, h3 {
+    font-family: 'Playfair Display', serif !important;
     color: var(--cream) !important;
 }
-
-p, li, span, div, label {
+p, li, span {
     font-family: 'DM Sans', sans-serif !important;
     color: var(--cream-dim);
 }
 
-/* ── Hero Banner ───────────────────────────────────────────────────────────── */
-.hero {
-    background: linear-gradient(160deg, #141414 0%, #0D0D0D 60%, #111008 100%);
-    border-bottom: 1px solid rgba(201,168,76,0.2);
-    padding: 3.5rem 2rem 2.5rem;
-    margin: -1rem -1rem 2.5rem -1rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-.hero::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 600px; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-}
-.hero::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 300px; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent);
-}
-.hero-eyebrow {
-    font-family: 'DM Sans', sans-serif !important;
-    font-size: 0.7rem;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--gold) !important;
-    margin-bottom: 1rem;
-}
-.hero-title {
-    font-family: 'Playfair Display', serif !important;
-    font-size: 3rem !important;
-    font-weight: 700 !important;
-    color: var(--cream) !important;
-    line-height: 1.15;
-    margin-bottom: 0.8rem;
-    letter-spacing: -0.5px;
-}
-.hero-title span {
-    color: var(--gold) !important;
-    font-style: italic;
-}
-.hero-subtitle {
-    font-family: 'DM Sans', sans-serif !important;
-    font-size: 0.95rem;
-    color: var(--muted) !important;
-    max-width: 520px;
-    margin: 0 auto;
-    line-height: 1.6;
-}
-
-/* ── Step Headers ──────────────────────────────────────────────────────────── */
 .step-header {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1rem 1.5rem;
+    padding: 0.9rem 1.4rem;
     background: var(--dark-3);
     border: 1px solid rgba(201,168,76,0.2);
     border-left: 3px solid var(--gold);
     border-radius: 0 8px 8px 0;
     margin-bottom: 1.5rem;
-}
-.step-number {
+    color: var(--cream);
     font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
-    color: var(--gold);
-    font-weight: 700;
-    min-width: 28px;
-}
-.step-title {
-    font-family: 'Playfair Display', serif !important;
     font-size: 1rem;
-    color: var(--cream) !important;
     font-weight: 600;
-    letter-spacing: 0.3px;
-}
-.step-desc {
-    font-family: 'DM Sans', sans-serif !important;
-    font-size: 0.78rem;
-    color: var(--muted) !important;
-    margin-top: 1px;
 }
 
-/* ── Buttons ───────────────────────────────────────────────────────────────── */
-.stButton > button {
-    background: linear-gradient(135deg, var(--gold) 0%, #B8943E 100%) !important;
-    color: #0D0D0D !important;
-    border: none !important;
-    border-radius: 6px !important;
-    padding: 0.55rem 1.6rem !important;
-    font-family: 'DM Sans', sans-serif !important;
-    font-size: 0.85rem !important;
-    font-weight: 500 !important;
-    letter-spacing: 0.5px !important;
-    transition: all 0.2s ease !important;
-}
-.stButton > button:hover {
-    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%) !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 6px 20px rgba(201,168,76,0.3) !important;
-}
-.stButton > button:active {
-    transform: translateY(0) !important;
-}
-
-/* ── Download Button ───────────────────────────────────────────────────────── */
-.stDownloadButton > button {
-    background: transparent !important;
-    color: var(--gold) !important;
-    border: 1px solid var(--gold) !important;
-    border-radius: 6px !important;
-    padding: 0.55rem 1.6rem !important;
-    font-family: 'DM Sans', sans-serif !important;
-    font-size: 0.85rem !important;
-    font-weight: 500 !important;
-    transition: all 0.2s ease !important;
-}
-.stDownloadButton > button:hover {
-    background: var(--gold-dim) !important;
-    box-shadow: 0 4px 16px rgba(201,168,76,0.2) !important;
-    transform: translateY(-1px) !important;
-}
-
-/* ── File Uploader ─────────────────────────────────────────────────────────── */
-[data-testid="stFileUploader"] {
-    background: var(--dark-3) !important;
-    border: 1px dashed rgba(201,168,76,0.3) !important;
-    border-radius: 10px !important;
-    padding: 1.2rem !important;
-    transition: border-color 0.2s ease !important;
-}
-[data-testid="stFileUploader"]:hover {
-    border-color: rgba(201,168,76,0.7) !important;
-    background: var(--dark-4) !important;
-}
-[data-testid="stFileUploader"] label {
-    color: var(--muted) !important;
-    font-family: 'DM Sans', sans-serif !important;
-    font-size: 0.85rem !important;
-}
-
-/* ── Metric Boxes ──────────────────────────────────────────────────────────── */
 [data-testid="stMetric"] {
     background: var(--dark-3) !important;
     border: 1px solid var(--dark-4) !important;
     border-top: 2px solid rgba(201,168,76,0.4) !important;
     border-radius: 8px !important;
     padding: 1.2rem !important;
-    transition: border-top-color 0.2s ease, box-shadow 0.2s ease !important;
+    transition: border-top-color 0.2s ease !important;
 }
 [data-testid="stMetric"]:hover {
     border-top-color: var(--gold) !important;
     box-shadow: 0 4px 20px rgba(201,168,76,0.1) !important;
 }
 [data-testid="stMetricLabel"] > div {
-    font-family: 'DM Sans', sans-serif !important;
     font-size: 0.7rem !important;
     text-transform: uppercase !important;
     letter-spacing: 2px !important;
@@ -306,165 +128,70 @@ p, li, span, div, label {
     font-family: 'Playfair Display', serif !important;
     font-size: 1.8rem !important;
     color: var(--cream) !important;
-    font-weight: 700 !important;
 }
 
-/* ── Dataframes ────────────────────────────────────────────────────────────── */
-[data-testid="stDataFrame"] {
-    border: 1px solid var(--dark-4) !important;
-    border-radius: 8px !important;
-    overflow: hidden !important;
+.stButton > button {
+    background: linear-gradient(135deg, var(--gold), #B8943E) !important;
+    color: #0D0D0D !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.2s ease !important;
 }
-[data-testid="stDataFrame"] th {
-    background: var(--dark-3) !important;
+.stButton > button:hover {
+    background: linear-gradient(135deg, var(--gold-light), var(--gold)) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 20px rgba(201,168,76,0.3) !important;
+}
+.stDownloadButton > button {
+    background: transparent !important;
     color: var(--gold) !important;
+    border: 1px solid var(--gold) !important;
+    border-radius: 6px !important;
     font-family: 'DM Sans', sans-serif !important;
-    font-size: 0.75rem !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1.5px !important;
-    border-bottom: 1px solid rgba(201,168,76,0.2) !important;
+    transition: all 0.2s ease !important;
 }
-[data-testid="stDataFrame"] td {
-    color: var(--cream-dim) !important;
-    font-family: 'DM Sans', sans-serif !important;
-    font-size: 0.85rem !important;
-    background: var(--dark-2) !important;
-    border-bottom: 1px solid var(--dark-4) !important;
+.stDownloadButton > button:hover {
+    background: var(--gold-dim) !important;
+    box-shadow: 0 4px 16px rgba(201,168,76,0.2) !important;
 }
-
-/* ── Success / Info / Warning / Error ──────────────────────────────────────── */
-[data-testid="stAlert"] {
-    background: var(--dark-3) !important;
-    border-radius: 8px !important;
-    border: 1px solid var(--dark-4) !important;
-    font-family: 'DM Sans', sans-serif !important;
-    font-size: 0.88rem !important;
-}
-div[data-baseweb="notification"] {
-    background: var(--dark-3) !important;
-}
-.stSuccess > div {
-    border-left: 3px solid var(--green) !important;
-    color: var(--cream-dim) !important;
-}
-.stInfo > div {
-    border-left: 3px solid var(--blue) !important;
-    color: var(--cream-dim) !important;
-}
-.stWarning > div {
-    border-left: 3px solid var(--amber) !important;
-    color: var(--cream-dim) !important;
-}
-.stError > div {
-    border-left: 3px solid var(--red) !important;
-    color: var(--cream-dim) !important;
-}
-
-/* ── Expanders ─────────────────────────────────────────────────────────────── */
+   
 [data-testid="stExpander"] {
     background: var(--dark-3) !important;
     border: 1px solid var(--dark-4) !important;
     border-radius: 8px !important;
-    margin-bottom: 0.5rem !important;
 }
 [data-testid="stExpander"] summary {
     font-family: 'DM Sans', sans-serif !important;
-    font-size: 0.88rem !important;
     color: var(--muted) !important;
-    font-weight: 500 !important;
 }
 [data-testid="stExpander"] summary:hover {
     color: var(--gold) !important;
 }
-[data-testid="stExpander"] svg {
-    fill: var(--gold) !important;
-}
 
-/* ── Dividers ──────────────────────────────────────────────────────────────── */
-hr {
-    border: none !important;
-    height: 1px !important;
-    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent) !important;
-    margin: 2rem 0 !important;
+.hero-banner {
+    background: linear-gradient(135deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%);
+    color: white;
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    text-align: center;
 }
-
-/* ── Spinner ───────────────────────────────────────────────────────────────── */
-.stSpinner > div > div {
-    border-top-color: var(--gold) !important;
+.hero-banner h1 {
+    color: white;
+    font-size: 2.4rem;
+    margin-bottom: 0.3rem;
 }
-
-/* ── Selectbox / Input ─────────────────────────────────────────────────────── */
-[data-baseweb="select"] {
-    background: var(--dark-3) !important;
-    border-color: var(--dark-4) !important;
+.hero-banner p {
+    color: #B0BEC5;
+    font-size: 1rem;
+    margin: 0;
 }
-[data-baseweb="input"] {
-    background: var(--dark-3) !important;
-    border-color: var(--dark-4) !important;
-    color: var(--cream) !important;
-}
-
-/* ── Slider ────────────────────────────────────────────────────────────────── */
-[data-testid="stSlider"] [data-baseweb="slider"] div[role="slider"] {
-    background: var(--gold) !important;
-    border-color: var(--gold) !important;
-}
-
-/* ── Gold Divider Utility ──────────────────────────────────────────────────── */
-.gold-divider {
-    height: 1px;
-    background: linear-gradient(90deg, var(--gold), transparent);
-    margin: 0.5rem 0 1.5rem 0;
-    width: 60px;
-}
-
-/* ── Recommendation Cards ──────────────────────────────────────────────────── */
-.rec-card {
-    background: var(--dark-3);
-    border: 1px solid var(--dark-4);
-    border-radius: 10px;
-    padding: 1.2rem 1.4rem;
-    margin-bottom: 0.8rem;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-.rec-card:hover {
-    border-color: rgba(201,168,76,0.3);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-}
-
 </style>
 """, unsafe_allow_html=True)
 
-
-# ── Hero Banner ───────────────────────────────────────────────────────────────
-st.markdown("""
-<div class="hero">
-    <div class="hero-eyebrow">AI-Powered Restaurant Intelligence</div>
-    <div class="hero-title">Menu<span>Mind</span></div>
-    <div class="hero-subtitle">
-        Transform your menu data into precision pricing strategy.
-        Powered by advanced AI and menu engineering methodology.
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-
-# ── Helper: Step Header ───────────────────────────────────────────────────────
-def step_header(number: str, title: str, description: str):
-    st.markdown(f"""
-<div class="step-header">
-    <div class="step-number">{number}</div>
-    <div>
-        <div class="step-title">{title}</div>
-        <div class="step-desc">{description}</div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-
-    
-</style>
-""", unsafe_allow_html=True)
 
 # PDF Generator 
 def clean_text(text: str) -> str:
