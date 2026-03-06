@@ -261,11 +261,19 @@ st.markdown("""
                 color:#EFE7D5; font-weight:700; margin-bottom:0.6rem;">
         MenuMind
     </div>
-    <div style="font-size:0.65rem; letter-spacing:3px; text-transform:uppercase;
-            color:#8A9BB0; font-family:'DM Sans',sans-serif;
-            max-width:480px; margin:0 auto; line-height:1.6;">
+    <div style="
+    font-size: 0.55rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #8A9BB0;
+    font-family: 'DM Sans', sans-serif;
+    margin: 0 auto;
+    line-height: 1.6;
+">
     Transform your menu data into precision pricing strategy
 </div>
+
+
 
 </div>
 """, unsafe_allow_html=True)
