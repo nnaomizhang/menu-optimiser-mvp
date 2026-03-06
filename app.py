@@ -688,7 +688,7 @@ if "recommendations" not in st.session_state:
 elif not llm:
     st.error("Please enter your OpenAI API key in the sidebar.")
 else:
-    if st.button("Generate PDF Report"):
+    if st.button("Download Report Here"):
         df = st.session_state["df"]
         recommendations = st.session_state["recommendations"]
 
