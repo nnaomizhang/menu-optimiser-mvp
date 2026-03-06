@@ -825,15 +825,15 @@ Tailor every recommendation to this specific restaurant's situation.
 
 Analyse the menu data and return ONLY a valid JSON array.
 Each object must have exactly these fields:
-{
+{{
     "item_name": "<exact name from data>",
     "classification": "<classification from data>",
     "current_price": <number>,
     "recommended_price": <number>,
     "action": "<one of: Promote / Reprice / Reposition / Remove / Keep>",
     "reasoning": "<2 sentence plain English explanation>",
-    "projected_monthly_impact": "<e.g. +£120/month or Neutral>"
-}
+    "projected_monthly_impact": "<e.g. +GBP120/month or Neutral>"
+}}
 
 Rules:
 "- Signature: keep price, action = Promote"
