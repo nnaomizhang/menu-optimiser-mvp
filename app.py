@@ -34,17 +34,6 @@ st.caption("Upload your menu data to get AI-powered pricing recommendations and 
 
 # Sidebar 
 
-api_key = None
-if hasattr(st, "secrets"):
-    api_key = st.secrets.get("OPENAI_API_KEY")
-if not api_key:
-    api_key = os.getenv("OPENAI_API_KEY")
-if not api_key:
-    api_key = st.sidebar.text_input("Enter your OpenAI API key", type="password")
-
-model = st.sidebar.selectbox("Model", ["gpt-4o-mini"])
-temperature = st.sidebar.slider("Temperature", 0.0, 1.0, 0.2)
-
 llm = ChatOpenAI(
     model=model,
     temperature=temperature,
