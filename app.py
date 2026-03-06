@@ -61,7 +61,7 @@ st.markdown("""
 :root {
     --bg:          #F2F0EC;
     --bg-2:        #F2F0EC;
-    --bg-3:        #DFD5BE;
+    --bg-3:        #F2F0EC;
     --navy:        #22314C;
     --navy-light:  #2E4268;
     --navy-dim:    rgba(34,49,76,0.08);
@@ -72,6 +72,12 @@ st.markdown("""
     --red:         #A04040;
     --blue:        #2E5F8A;
 }
+
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+[data-testid="stToolbar"] {visibility: hidden;}
+[data-testid="stDecoration"] {display: none;}
 
 .stApp { background-color: var(--bg); }
 .main  { background-color: transparent; }
