@@ -276,9 +276,9 @@ if "restaurant_name" not in st.session_state:
     text-align: center;
 ">
     <p style="font-size: 0.8rem; color: #7A7060; line-height: 1.8; font-family: 'DM Sans', sans-serif;">
-        MenuMind analyses your menu's sales and cost data to classify every item 
-        by profitability and popularity — then generates AI-powered pricing recommendations 
-        and a downloadable report in minutes.
+        MenuMind applies institutional-grade menu engineering methodology to your data — 
+        delivering precise pricing intelligence and a boardroom-ready report, 
+        without the consultant fees.
     </p>
     <p style="font-size: 0.7rem; color: #A09880; font-family: 'DM Sans', sans-serif;">
         You'll need a spreadsheet with your item names, prices, food costs, and monthly sales. 
@@ -413,54 +413,182 @@ def generate_pdf(df, recommendations, summary):
         return bytes(output)
     return output.encode("latin-1")
 
+# Step 1: Manual Entry OR Upload ───────────────────────────────
 
-# Step 1: Upload and Validation ─────────────────────────────────────────────────────────────
-st.markdown('<div class="step-header">Step 1 — Upload & Validate Menu Data</div>', unsafe_allow_html=True)
+st.markdown('<div class="step-header">Step 1 — Enter Your Menu Data</div>', unsafe_allow_html=True)
 
-uploaded_file = st.file_uploader(
-    "Upload your menu spreadsheet",
-    type=["csv", "xlsx"],
-    help="Must contain: item_name, category, current_price, food_cost, monthly_units_sold"
-)
+tab1, tab2 = st.tabs(["Enter Manually", "Upload Spreadsheet"])
 
-if st.button("Validate Data", disabled=uploaded_file is None):
-    try:
-        if uploaded_file.name.endswith(".csv"):
-            df_raw = pd.read_csv(uploaded_file)
+# ── TAB 1: Manual Entry ───────────────────────────────────────────────────────
+with tab1:
+    st.markdown("""
+<p style="font-size:0.85rem; color:#7A7060; font-family:'DM Sans',sans-serif; margin-bottom:1rem;">
+    Type your menu items directly below. Add as many rows as you need.
+</p>
+""", unsafe_allow_html=True)
+
+    if "manual_items" not in st.session_state:
+        st.session_state["manual_items"] = [
+            {"item_name": "", "category": "Mains", "current_price": 0.0,
+             "food_cost": 0.0, "monthly_units_sold": 0}
+        ]
+
+    CATEGORIES = ["Starters", "Mains", "Sides", "Desserts", "Drinks", "Meze", "Other"]
+
+    for i, item in enumerate(st.session_state["manual_items"]):
+        col1, col2, col3, col4, col5, col6 = st.columns([3, 2, 1.5, 1.5, 1.5, 0.5])
+        with col1:
+            st.session_state["manual_items"][i]["item_name"] = st.text_input(
+                "Item Name" if i == 0 else " ",
+                value=item["item_name"],
+                placeholder="e.g. Grilled Halloumi",
+                key=f"name_{i}",
+                label_visibility="visible" if i == 0 else "collapsed"
+            )
+        with col2:
+            st.session_state["manual_items"][i]["category"] = st.selectbox(
+                "Category" if i == 0 else " ",
+                CATEGORIES,
+                index=CATEGORIES.index(item["category"]) if item["category"] in CATEGORIES else 0,
+                key=f"cat_{i}",
+                label_visibility="visible" if i == 0 else "collapsed"
+            )
+        with col3:
+            st.session_state["manual_items"][i]["current_price"] = st.number_input(
+                "Selling Price (£)" if i == 0 else " ",
+                min_value=0.0, step=0.50,
+                value=float(item["current_price"]),
+                key=f"price_{i}",
+                label_visibility="visible" if i == 0 else "collapsed"
+            )
+        with col4:
+            st.session_state["manual_items"][i]["food_cost"] = st.number_input(
+                "Food Cost (£)" if i == 0 else " ",
+                min_value=0.0, step=0.50,
+                value=float(item["food_cost"]),
+                key=f"cost_{i}",
+                label_visibility="visible" if i == 0 else "collapsed"
+            )
+        with col5:
+            st.session_state["manual_items"][i]["monthly_units_sold"] = st.number_input(
+                "Monthly Sales" if i == 0 else " ",
+                min_value=0, step=1,
+                value=int(item["monthly_units_sold"]),
+                key=f"units_{i}",
+                label_visibility="visible" if i == 0 else "collapsed"
+            )
+        with col6:
+            st.markdown("<div style='margin-top: 1.8rem;'>", unsafe_allow_html=True)
+            if st.button("✕", key=f"del_{i}", help="Remove this item"):
+                st.session_state["manual_items"].pop(i)
+                st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
+
+    col1, col2 = st.columns([1, 5])
+    with col1:
+        if st.button("+ Add Item"):
+            st.session_state["manual_items"].append(
+                {"item_name": "", "category": "Mains", "current_price": 0.0,
+                 "food_cost": 0.0, "monthly_units_sold": 0}
+            )
+            st.rerun()
+
+    st.markdown("<div style='height:0.5rem'></div>", unsafe_allow_html=True)
+
+    if st.button("Validate Data", key="validate_manual"):
+        items = st.session_state["manual_items"]
+        empty = [i+1 for i, item in enumerate(items) if not item["item_name"].strip()]
+        if empty:
+            st.error(f"Please enter a name for row(s): {empty}")
+        elif len(items) < 4:
+            st.warning("Add at least 4 items for a meaningful analysis.")
         else:
-            df_raw = pd.read_excel(uploaded_file)
-
-        required_cols = ["item_name", "category", "current_price",
-                         "food_cost", "monthly_units_sold"]
-        missing = [c for c in required_cols if c not in df_raw.columns]
-
-        if missing:
-            st.error(f"Missing columns: {missing}")
-            st.info("Please check your spreadsheet has the correct column names.")
-        else:
-            # Calculate derived metrics
+            df_raw = pd.DataFrame(items)
             df_raw["gross_margin"]    = df_raw["current_price"] - df_raw["food_cost"]
             df_raw["margin_pct"]      = (df_raw["gross_margin"] / df_raw["current_price"]) * 100
             df_raw["monthly_revenue"] = df_raw["current_price"] * df_raw["monthly_units_sold"]
             df_raw["monthly_profit"]  = df_raw["gross_margin"]  * df_raw["monthly_units_sold"]
-
             st.session_state["df"] = df_raw
             st.session_state.pop("recommendations", None)
             st.session_state.pop("summary", None)
             st.success(f"Data validated — {len(df_raw)} menu items loaded.")
+            
+# ── TAB 2: Upload ─────────────────────────────────────────────────────────────
+with tab2:
+    st.markdown("""
+<p style="font-size:0.85rem; color:#7A7060; font-family:'DM Sans',sans-serif; margin-bottom:1rem;">
+    Download the template, fill it in, and upload it here.
+    Works with Excel and CSV files.
+</p>
+""", unsafe_allow_html=True)
 
-    except Exception as e:
-        st.error(f"Failed to read file: {e}")
-        
+    with st.expander("Download starter template"):
+        st.markdown("""
+| Column | What to enter |
+|---|---|
+| **Item Name** | e.g. Grilled Halloumi |
+| **Category** | e.g. Starters, Mains, Drinks |
+| **Selling Price** | What you charge the customer in £ |
+| **Food Cost** | What the ingredients cost you in £ |
+| **Monthly Sales** | How many you sell in a typical month |
+""")
+        template_df = pd.DataFrame([
+            {"Item Name": "Grilled Halloumi",   "Category": "Starters", "Selling Price": 8.50,  "Food Cost": 3.20, "Monthly Sales": 120},
+            {"Item Name": "Chicken Souvlaki",   "Category": "Mains",    "Selling Price": 14.50, "Food Cost": 4.80, "Monthly Sales": 95},
+            {"Item Name": "Greek Salad",        "Category": "Sides",    "Selling Price": 7.00,  "Food Cost": 1.80, "Monthly Sales": 150},
+            {"Item Name": "Baklava",            "Category": "Desserts", "Selling Price": 6.50,  "Food Cost": 1.80, "Monthly Sales": 60},
+            {"Item Name": "House Wine (Glass)", "Category": "Drinks",   "Selling Price": 7.50,  "Food Cost": 2.20, "Monthly Sales": 180},
+        ])
+        st.download_button(
+            label="Download Template (CSV)",
+            data=template_df.to_csv(index=False),
+            file_name="menumind_template.csv",
+            mime="text/csv"
+        )
+
+    COLUMN_MAP = {
+        "Item Name": "item_name", "Category": "category",
+        "Selling Price": "current_price", "Food Cost": "food_cost",
+        "Monthly Sales": "monthly_units_sold",
+        "item_name": "item_name", "category": "category",
+        "current_price": "current_price", "food_cost": "food_cost",
+        "monthly_units_sold": "monthly_units_sold",
+    }
+
+    uploaded_file = st.file_uploader(
+        "Upload your completed template",
+        type=["csv", "xlsx"],
+    )
+
+    if st.button("Validate Data", key="validate_upload", disabled=uploaded_file is None):
+        try:
+            df_raw = pd.read_csv(uploaded_file) if uploaded_file.name.endswith(".csv") else pd.read_excel(uploaded_file)
+            df_raw = df_raw.rename(columns=COLUMN_MAP)
+            required_cols = ["item_name", "category", "current_price", "food_cost", "monthly_units_sold"]
+            missing = [c for c in required_cols if c not in df_raw.columns]
+            if missing:
+                st.error(f"Could not find these columns: {missing}. Please use the provided template.")
+            else:
+                df_raw["gross_margin"]    = df_raw["current_price"] - df_raw["food_cost"]
+                df_raw["margin_pct"]      = (df_raw["gross_margin"] / df_raw["current_price"]) * 100
+                df_raw["monthly_revenue"] = df_raw["current_price"] * df_raw["monthly_units_sold"]
+                df_raw["monthly_profit"]  = df_raw["gross_margin"]  * df_raw["monthly_units_sold"]
+                st.session_state["df"] = df_raw
+                st.session_state.pop("recommendations", None)
+                st.session_state.pop("summary", None)
+                st.success(f"Data validated — {len(df_raw)} menu items loaded.")
+        except Exception as e:
+            st.error(f"Failed to read file: {e}")
+       
+# ── Shared metrics shown after either method validates ────────────────────────
 if "df" in st.session_state:
     df = st.session_state["df"]
-
-    # Summary metrics
+    st.markdown("---")
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Total Items",        len(df))
-    col2.metric("Monthly Revenue",    f"£{df['monthly_revenue'].sum():,.2f}")
-    col3.metric("Monthly Profit",     f"£{df['monthly_profit'].sum():,.2f}")
-    col4.metric("Avg Margin",         f"{df['margin_pct'].mean():.1f}%")
+    col1.metric("Total Items",     len(df))
+    col2.metric("Monthly Revenue", f"£{df['monthly_revenue'].sum():,.2f}")
+    col3.metric("Monthly Profit",  f"£{df['monthly_profit'].sum():,.2f}")
+    col4.metric("Avg Margin",      f"{df['margin_pct'].mean():.1f}%")
 
     st.dataframe(
         df[["item_name", "category", "current_price", "food_cost",
@@ -473,7 +601,7 @@ if "df" in st.session_state:
         }),
         use_container_width=True
     )
-
+     
 # Step 2: Menu Analysis ─────────────────────────────────────────────────────────────
 st.markdown("---")
 st.markdown('<div class="step-header">Step 2 — Menu Engineering Analysis</div>', unsafe_allow_html=True)
