@@ -333,16 +333,17 @@ def generate_pdf(df, recommendations, summary):
     os.makedirs(font_dir, exist_ok=True)
     regular = f"{font_dir}/DejaVuSans.ttf"
     bold    = f"{font_dir}/DejaVuSans-Bold.ttf"
+    
     if not os.path.exists(regular):
-        urllib.request.urlretrieve(
-            "https://github.com/dejavu-fonts/dejavu-fonts/raw/master/ttf/DejaVuSans.ttf",
-            regular
-        )
+    urllib.request.urlretrieve(
+        "https://github.com/dejavu-fonts/dejavu-fonts/raw/version_2_37/ttf/DejaVuSans.ttf",
+        regular
+    )
     if not os.path.exists(bold):
-        urllib.request.urlretrieve(
-            "https://github.com/dejavu-fonts/dejavu-fonts/raw/master/ttf/DejaVuSans-Bold.ttf",
-            bold
-        )
+    urllib.request.urlretrieve(
+        "https://github.com/dejavu-fonts/dejavu-fonts/raw/version_2_37/ttf/DejaVuSans-Bold.ttf",
+        bold
+    )
     pdf = FPDF()
     pdf.add_font("DejaVu", "",  regular, uni=True)
     pdf.add_font("DejaVu", "B", bold,    uni=True)
@@ -448,7 +449,7 @@ with tab1:
              "food_cost": 0.0, "monthly_units_sold": 0}
         ]
 
-    CATEGORIES = ["Starters", "Mains", "Sides", "Desserts", "Drinks", "Meze", "Other"]
+    CATEGORIES = ["Starters", "Mains", "Sides", "Desserts", "Drinks", "Sharing", "Other"]
 
     for i, item in enumerate(st.session_state["manual_items"]):
         col1, col2, col3, col4, col5, col6 = st.columns([3, 2, 1.5, 1.5, 1.5, 0.5])
