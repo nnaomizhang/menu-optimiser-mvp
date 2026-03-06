@@ -328,9 +328,24 @@ def clean_text(text: str) -> str:
 
 
 def generate_pdf(df, recommendations, summary):
+    import urllib.request, os
+    font_dir = "/tmp/fonts"
+    os.makedirs(font_dir, exist_ok=True)
+    regular = f"{font_dir}/DejaVuSans.ttf"
+    bold    = f"{font_dir}/DejaVuSans-Bold.ttf"
+    if not os.path.exists(regular):
+        urllib.request.urlretrieve(
+            "https://github.com/dejavu-fonts/dejavu-fonts/raw/master/ttf/DejaVuSans.ttf",
+            regular
+        )
+    if not os.path.exists(bold):
+        urllib.request.urlretrieve(
+            "https://github.com/dejavu-fonts/dejavu-fonts/raw/master/ttf/DejaVuSans-Bold.ttf",
+            bold
+        )
     pdf = FPDF()
-    pdf.add_font("DejaVu", "", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", uni=True)
-    pdf.add_font("DejaVu", "B", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", uni=True)
+    pdf.add_font("DejaVu", "",  regular, uni=True)
+    pdf.add_font("DejaVu", "B", bold,    uni=True)
     pdf.add_page()
 
     # ── Title ─────────────────────────────────────────────────────────────
