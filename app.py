@@ -87,7 +87,7 @@ h1, h2, h3, h4 {
     font-family: 'DM Sans', sans-serif !important;
     color: var(--navy) !important;
 }
-p, li, span, div, label {
+p, li, label {
     font-family: 'DM Sans', sans-serif !important;
     color: var(--ink);
 }
