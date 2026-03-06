@@ -618,7 +618,7 @@ if "df" in st.session_state:
 
 # Step 2: Menu Analysis ─────────────────────────────────────────────────────────────
 st.markdown("---")
-st.markdown('<div class="step-header">02 — Menu Analysis</div>', unsafe_allow_html=True)
+st.markdown('<div class="step-header">02 — Your Menu Analysis</div>', unsafe_allow_html=True)
 
 if "df" not in st.session_state:
     st.warning("Please complete Step 1 first.")
