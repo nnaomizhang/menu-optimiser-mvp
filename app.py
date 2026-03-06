@@ -59,7 +59,7 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
 
 :root {
-    --bg:          #EFE7D5;
+    --bg:          #F2F0EC;
     --bg-2:        #E8DFC8;
     --bg-3:        #DFD5BE;
     --navy:        #22314C;
