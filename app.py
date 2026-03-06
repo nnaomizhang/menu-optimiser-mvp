@@ -270,7 +270,7 @@ st.markdown("""
 # Restaurant Name
 restaurant_name = st.text_input(
     "Enter your restaurant name to get started",
-    placeholder="e.g. The Olive Branch",
+    placeholder="e.g. The Paradosiako",
 )
 st.session_state["restaurant_name"] = restaurant_name
 
@@ -410,7 +410,7 @@ if st.button("Validate Data", disabled=uploaded_file is None):
         missing = [c for c in required_cols if c not in df_raw.columns]
 
         if missing:
-            st.error(f"❌ Missing columns: {missing}")
+            st.error(f"Missing columns: {missing}")
             st.info("Please check your spreadsheet has the correct column names.")
         else:
             # Calculate derived metrics
