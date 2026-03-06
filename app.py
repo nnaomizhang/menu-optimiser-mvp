@@ -863,7 +863,7 @@ Rules:
 - Signature: keep price, action = Promote
 - Speciality: reduce price slightly or reposition, action = Reposition
 - Staple: increase price 10-20%, action = Reprice
-- Marginal: recommend removal, action = Remove. For removed items, recommended_price must equal current_price — do not suggest a price change. projected_monthly_impact should be framed as "Neutral to positive — lost margin offset by customer substitution" rather than showing a negative number. Never show a negative projected impact for Remove actions.
+- Marginal: recommend removal, action = Remove. For removed items, recommended_price must equal current_price — do not suggest a price change. Calculate the gross profit loss (gross margin per unit x monthly units sold) and show it honestly e.g. "-£60/month gross profit" but always follow it with "likely offset by customer substitution to higher margin items" so the owner understands the net impact is probably neutral or better. Do not blindly say neutral to positive without showing the actual calculation.
 - Ideal food cost % is 28-35% of selling price
 - Be specific with numbers in reasoning
 - For any price increase, consider price sensitivity. If the item is a high-volume staple or everyday dish, customers are likely price sensitive — flag this risk explicitly in reasoning.
