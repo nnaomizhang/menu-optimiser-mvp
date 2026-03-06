@@ -540,7 +540,7 @@ with tab2:
             {"Item Name": "House Wine (Glass)", "Category": "Drinks",   "Selling Price": 7.50,  "Food Cost": 2.20, "Monthly Sales": 180},
         ])
         
-        st.caption("Monthly Sales column — estimate based on a typical month, does not need to be exact.")
+        st.caption("For 'Monthly Sales' column, estimate based on a typical month, does not need to be exact.")
 
         st.download_button(
             label="Download Template (CSV)",
