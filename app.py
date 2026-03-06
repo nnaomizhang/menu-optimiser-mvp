@@ -176,7 +176,7 @@ p, li, label {
 [data-testid="stMetric"] {
     background: var(--bg-2) !important;
     border: 1px solid var(--bg-3) !important;
-    border-top: 2px solid var(--navy) !important;
+    border-top: 2px solid var(--bg-3) !important;
     border-radius: 8px !important;
     padding: 1.2rem !important;
     transition: box-shadow 0.2s ease !important;
@@ -195,7 +195,7 @@ p, li, label {
     font-family: 'DM Sans', sans-serif !important;
     font-size: 1.8rem !important;
     font-weight: 700 !important;
-    color: var(--navy) !important;
+    color: var(--bg-3) !important;
 }
 
 [data-testid="stDataFrame"] {
@@ -229,7 +229,7 @@ p, li, label {
     font-weight: 500 !important;
 }
 [data-testid="stExpander"] summary:hover {
-    color: var(--navy) !important;
+    color: var(--bg-3) !important;
 }
 
 hr {
@@ -240,7 +240,7 @@ hr {
 }
 
 .stSpinner > div > div {
-    border-top-color: var(--navy) !important;
+    border-top-color: var(--bg-3) !important;
 }
 </style>
 """, unsafe_allow_html=True)
