@@ -390,7 +390,7 @@ def generate_pdf(df, recommendations, summary):
     pdf.set_font("Times", "B", 12)
     pdf.cell(0, 8, "AI Pricing Recommendations", ln=True)
     for rec in recommendations:
-        pdf.set_font("TTimess", "B", 10)
+        pdf.set_font("Times", "B", 10)
         item   = clean_text(str(rec.get("item_name", "")))
         action = clean_text(str(rec.get("action", "")))
         pdf.cell(0, 7, f"{item} - {action}", ln=True)
