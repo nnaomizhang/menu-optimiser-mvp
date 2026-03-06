@@ -56,8 +56,190 @@ st.sidebar.markdown("""
 # ── Custom Styling ────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
 
+:root {
+    --bg:          #EFE7D5;
+    --bg-2:        #E8DFC8;
+    --bg-3:        #DFD5BE;
+    --navy:        #22314C;
+    --navy-light:  #2E4268;
+    --navy-dim:    rgba(34,49,76,0.08);
+    --ink:         #1A1A1A;
+    --muted:       #7A7060;
+    --green:       #3A7D5C;
+    --amber:       #B5703A;
+    --red:         #A04040;
+    --blue:        #2E5F8A;
+}
+
+.stApp { background-color: var(--bg); }
+.main  { background-color: transparent; }
+.block-container {
+    padding-top: 0 !important;
+    padding-bottom: 4rem;
+    max-width: 1080px;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'DM Sans', sans-serif !important;
+    color: var(--navy) !important;
+}
+p, li, span, div, label {
+    font-family: 'DM Sans', sans-serif !important;
+    color: var(--ink);
+}
+
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1.4rem;
+    background: var(--navy);
+    border-left: 3px solid var(--amber);
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 1.5rem;
+}
+.step-number {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.2rem;
+    color: #EFE7D5;
+    font-weight: 700;
+    min-width: 28px;
+    opacity: 0.5;
+}
+.step-title {
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 1rem;
+    color: #EFE7D5 !important;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+.step-desc {
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.78rem;
+    color: #8A9BB0 !important;
+    margin-top: 2px;
+}
+
+.stButton > button {
+    background: var(--navy) !important;
+    color: var(--bg) !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 0.55rem 1.6rem !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.2s ease !important;
+}
+.stButton > button:hover {
+    background: var(--navy-light) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 20px rgba(34,49,76,0.25) !important;
+}
+.stButton > button:active {
+    transform: translateY(0) !important;
+}
+.stDownloadButton > button {
+    background: transparent !important;
+    color: var(--navy) !important;
+    border: 1px solid var(--navy) !important;
+    border-radius: 6px !important;
+    padding: 0.55rem 1.6rem !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+}
+.stDownloadButton > button:hover {
+    background: var(--navy-dim) !important;
+    box-shadow: 0 4px 16px rgba(34,49,76,0.15) !important;
+    transform: translateY(-1px) !important;
+}
+
+[data-testid="stFileUploader"] {
+    background: var(--bg-2) !important;
+    border: 1px dashed rgba(34,49,76,0.3) !important;
+    border-radius: 10px !important;
+    padding: 1rem !important;
+    transition: border-color 0.2s ease !important;
+}
+[data-testid="stFileUploader"]:hover {
+    border-color: var(--navy) !important;
+    background: var(--bg-3) !important;
+}
+
+[data-testid="stMetric"] {
+    background: var(--bg-2) !important;
+    border: 1px solid var(--bg-3) !important;
+    border-top: 2px solid var(--navy) !important;
+    border-radius: 8px !important;
+    padding: 1.2rem !important;
+    transition: box-shadow 0.2s ease !important;
+}
+[data-testid="stMetric"]:hover {
+    box-shadow: 0 4px 20px rgba(34,49,76,0.12) !important;
+}
+[data-testid="stMetricLabel"] > div {
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.7rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 2px !important;
+    color: var(--muted) !important;
+}
+[data-testid="stMetricValue"] > div {
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+    color: var(--navy) !important;
+}
+
+[data-testid="stDataFrame"] {
+    border: 1px solid var(--bg-3) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
+
+[data-testid="stAlert"] {
+    background: var(--bg-2) !important;
+    border-radius: 8px !important;
+    border: 1px solid var(--bg-3) !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.88rem !important;
+}
+.stSuccess > div { border-left: 3px solid var(--green) !important; }
+.stInfo    > div { border-left: 3px solid var(--blue) !important; }
+.stWarning > div { border-left: 3px solid var(--amber) !important; }
+.stError   > div { border-left: 3px solid var(--red) !important; }
+
+[data-testid="stExpander"] {
+    background: var(--bg-2) !important;
+    border: 1px solid var(--bg-3) !important;
+    border-radius: 8px !important;
+    margin-bottom: 0.5rem !important;
+}
+[data-testid="stExpander"] summary {
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.88rem !important;
+    color: var(--muted) !important;
+    font-weight: 500 !important;
+}
+[data-testid="stExpander"] summary:hover {
+    color: var(--navy) !important;
+}
+
+hr {
+    border: none !important;
+    height: 1px !important;
+    background: var(--bg-3) !important;
+    margin: 2rem 0 !important;
+}
+
+.stSpinner > div > div {
+    border-top-color: var(--navy) !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
