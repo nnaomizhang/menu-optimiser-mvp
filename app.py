@@ -860,18 +860,16 @@ Each object must have exactly these fields:
 }}
 
 Rules:
-"- Signature: keep price, action = Promote"
-"- Speciality: reduce price slightly or reposition, action = Reposition"
-"- Staple: increase price 10-20%, action = Reprice"
-"- Marginal: recommend removal, action = Remove"
+Rules:
+- Signature: keep price, action = Promote
+- Speciality: reduce price slightly or reposition, action = Reposition
+- Staple: increase price 10-20%, action = Reprice
+- Marginal: recommend removal, action = Remove. For removed items, projected_monthly_impact should reflect lost PROFIT not revenue, i.e. gross margin per unit x monthly units sold. Note that customers may substitute to other items so actual impact may be neutral or positive. State this clearly.
 - Ideal food cost % is 28-35% of selling price
 - Be specific with numbers in reasoning
-- For any price increase, consider price sensitivity. If the item is a high-volume staple 
-  or everyday dish, customers are likely price sensitive — flag this risk explicitly in reasoning.
-- projected_monthly_impact must account for potential volume loss. Give a realistic range 
-  e.g. "+£80 to +£160/month depending on volume retention" rather than assuming flat volume.
-- If a price increase risks significant volume loss that could make the change net negative, 
-  say so clearly and suggest a smaller incremental increase instead.
+- For any price increase, consider price sensitivity. If the item is a high-volume staple or everyday dish, customers are likely price sensitive — flag this risk explicitly in reasoning.
+- projected_monthly_impact must account for potential volume loss. Give a realistic range e.g. "+£80 to +£160/month depending on volume retention" rather than assuming flat volume.
+- If a price increase risks significant volume loss that could make the change net negative, say so clearly and suggest a smaller incremental increase instead.
 
 Return ONLY the JSON array. No markdown, no code fences, no explanation."""),
                 HumanMessage(content=f"Analyse this menu:\n\n{menu_summary}")
