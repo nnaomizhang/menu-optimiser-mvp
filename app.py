@@ -268,18 +268,20 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Restaurant Name
-restaurant_name = st.text_input(
-    "Enter your restaurant name to get started",
-    placeholder="e.g. The Paradosiako",
-)
-if st.button("Continue →"):
-    if not restaurant_name:
-        st.warning("Please enter your restaurant name to continue.")
-        st.stop()
-    else:
-        st.session_state["restaurant_name"] = restaurant_name
-
 if "restaurant_name" not in st.session_state:
+    restaurant_name = st.text_input(
+        "Enter your restaurant name to get started",
+        placeholder="e.g. The Paradosiako",
+    )
+
+    if st.button("Continue →"):
+        if not restaurant_name:
+            st.warning("Please enter your restaurant name to continue.")
+            st.stop()
+        else:
+            st.session_state["restaurant_name"] = restaurant_name
+            st.rerun()
+
     st.stop()
 
 # PDF Generator 
