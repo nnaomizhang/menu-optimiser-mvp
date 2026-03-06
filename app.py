@@ -874,14 +874,17 @@ else:
         df = st.session_state["df"]
         recommendations = st.session_state["recommendations"]
 
+        restaurant = st.session_state.get("restaurant_name", "this restaurant")
+
         with st.spinner("Generating your report..."):
             summary_messages = [
-                SystemMessage(content="""You are a senior restaurant business consultant.
-Write a concise 3-4 sentence executive summary of this menu analysis.
-Then write exactly 3 priority actions the restaurant should take this week.
+                SystemMessage(content=f"""You are a senior restaurant business consultant.
+Write a concise 3-4 sentence executive summary of this menu analysis for {restaurant}.
+Then write exactly 3 priority actions {restaurant} should take this week.
 Be specific with numbers. Plain English. No jargon. No bullet symbols.
 Use the terms Signature, Speciality, Staple and Marginal when referring to menu classifications."""),
                 HumanMessage(content=f"""
+Restaurant name: {restaurant}
 Menu classifications: {df['classification'].value_counts().to_dict()}
 Total monthly revenue: £{df['monthly_revenue'].sum():.2f}
 Total monthly profit: £{df['monthly_profit'].sum():.2f}
@@ -892,7 +895,8 @@ Number of Speciality items: {len(df[df['classification'] == 'Speciality'])}
 Number of Staple items: {len(df[df['classification'] == 'Staple'])}
 Recommendations summary: {json.dumps(recommendations[:5])}
 
-Write the executive summary and top 3 priority actions.""")
+Write the executive summary and top 3 priority actions for {restaurant}.""")
+            ]
             ]
 
             try:
