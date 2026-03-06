@@ -868,18 +868,9 @@ Return ONLY the JSON array. No markdown, no code fences, no explanation."""),
             "Keep":       "#95A5A6"
         }
 
-        action_icons = {
-            "Promote":    "📈",
-            "Reprice":    "💰",
-            "Reposition": "🔀",
-            "Remove":     "🗑️",
-            "Keep":       "✅"
-        }
-        
         for rec in recommendations:
             action = rec.get("action", "Keep")
             color  = action_colors.get(action, "#95A5A6")
-            icon   = action_icons.get(action, "✅")
             curr   = rec.get("current_price", 0)
             recp   = rec.get("recommended_price", 0)
             price_change = f"£{curr:.2f} → £{recp:.2f}" if curr != recp else f"£{curr:.2f} (no change)"
@@ -891,10 +882,10 @@ Return ONLY the JSON array. No markdown, no code fences, no explanation."""),
             box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
     <strong>{rec.get('item_name', '')}</strong> &nbsp;
     <span style="background:{color}; color:white; padding:2px 8px; 
-                 border-radius:4px; font-size:0.8rem;">{icon} {action}</span>
+                 border-radius:4px; font-size:0.8rem;">{action}</span>
     &nbsp; <span style="color:#666; font-size:0.85rem;">{rec.get('classification','')}</span><br/>
     <span style="font-size:0.9rem;"> {price_change} &nbsp;|&nbsp; 
-    📊 {rec.get('projected_monthly_impact','N/A')}</span><br/>
+    {rec.get('projected_monthly_impact','N/A')}</span><br/>
     <span style="color:#555; font-size:0.85rem;">{rec.get('reasoning','')}</span>
 </div>
 """, unsafe_allow_html=True)
