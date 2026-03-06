@@ -31,7 +31,7 @@ st.progress(steps_complete / 4, text=f"Progress: {steps_complete}/4 steps comple
 # Sidebar 
 api_key = st.secrets.get("OPENAI_API_KEY")
 model = "gpt-4o-mini"
-temperature = 0.2
+temperature = 0
 
 llm = ChatOpenAI(
     model=model,
@@ -458,8 +458,10 @@ else:
     if st.button("Analyse Menu"):
         df = st.session_state["df"]
 
-        median_margin = df["margin_pct"].median()
+        median_margin = df["gross_margin"].median()
         median_units  = df["monthly_units_sold"].median()
+        
+        st.write(f"Thresholds — Margin: {median_margin:.2f}, Units: {median_units:.0f}")
 
         def classify(row):
             hm = row["margin_pct"]         >= median_margin
