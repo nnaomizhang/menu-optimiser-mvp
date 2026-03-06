@@ -274,7 +274,7 @@ if "restaurant_name" not in st.session_state:
         placeholder="e.g. The Paradosiako",
     )
 
-    if st.button("Continue →"):
+    if st.button("Enter →"):
         if not restaurant_name:
             st.warning("Please enter your restaurant name to continue.")
             st.stop()
