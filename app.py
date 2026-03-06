@@ -267,20 +267,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("""
-<div style="
-    text-align: center;
-    font-size: 0.72rem;
-    color: #A09880;
-    font-family: 'DM Sans', sans-serif;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 1.5rem;
-">
-    Complete all four steps in one session — your data is not saved between visits
-</div>
-""", unsafe_allow_html=True)
-
 # Introduce Context
 if "restaurant_name" not in st.session_state:
     st.markdown("""
@@ -293,10 +279,6 @@ if "restaurant_name" not in st.session_state:
         MenuMind applies institutional-grade menu engineering methodology to your data — 
         delivering precise pricing intelligence and a boardroom-ready report, 
         without the consultant fees.
-    </p>
-    <p style="font-size: 0.7rem; color: #A09880; font-family: 'DM Sans', sans-serif;">
-        You'll need a spreadsheet with your item names, prices, food costs, and monthly sales. 
-        The whole process takes under 2 minutes.
     </p>
 </div>
 """, unsafe_allow_html=True)
@@ -522,8 +504,11 @@ with tab1:
     if st.button("Validate Data", key="validate_manual"):
         items = st.session_state["manual_items"]
         empty = [i+1 for i, item in enumerate(items) if not item["item_name"].strip()]
+        invalid_costs = [item["item_name"] for item in items if item["food_cost"] >= item["current_price"] and item["current_price"] > 0]
         if empty:
             st.error(f"Please enter a name for row(s): {empty}")
+        elif invalid_costs:
+            st.error(f"Food cost is higher than selling price for: {', '.join(invalid_costs)}. Please check your figures.")
         elif len(items) < 4:
             st.warning("Add at least 4 items for a meaningful analysis.")
         else:
@@ -594,14 +579,18 @@ with tab2:
             if missing:
                 st.error(f"Could not find these columns: {missing}. Please use the provided template.")
             else:
-                df_raw["gross_margin"]    = df_raw["current_price"] - df_raw["food_cost"]
-                df_raw["margin_pct"]      = (df_raw["gross_margin"] / df_raw["current_price"]) * 100
-                df_raw["monthly_revenue"] = df_raw["current_price"] * df_raw["monthly_units_sold"]
-                df_raw["monthly_profit"]  = df_raw["gross_margin"]  * df_raw["monthly_units_sold"]
-                st.session_state["df"] = df_raw
-                st.session_state.pop("recommendations", None)
-                st.session_state.pop("summary", None)
-                st.success(f"Data validated — {len(df_raw)} menu items loaded.")
+                invalid_costs = df_raw[df_raw["food_cost"] >= df_raw["current_price"]]["item_name"].tolist()
+                if invalid_costs:
+                    st.error(f"Food cost is higher than selling price for: {', '.join(invalid_costs)}. Please check your figures.")
+                else:
+                    df_raw["gross_margin"]    = df_raw["current_price"] - df_raw["food_cost"]
+                    df_raw["margin_pct"]      = (df_raw["gross_margin"] / df_raw["current_price"]) * 100
+                    df_raw["monthly_revenue"] = df_raw["current_price"] * df_raw["monthly_units_sold"]
+                    df_raw["monthly_profit"]  = df_raw["gross_margin"]  * df_raw["monthly_units_sold"]
+                    st.session_state["df"] = df_raw
+                    st.session_state.pop("recommendations", None)
+                    st.session_state.pop("summary", None)
+                    st.success(f"Data validated — {len(df_raw)} menu items loaded.")
         except Exception as e:
             st.error(f"Failed to read file: {e}")
        
