@@ -85,7 +85,7 @@ header {visibility: hidden;}
 
 h1, h2, h3, h4 {
     font-family: 'DM Sans', sans-serif !important;
-    color: var(--bg-3) !important;
+    color: var(--navy) !important;
 }
 p, li, label {
     font-family: 'DM Sans', sans-serif !important;
@@ -97,7 +97,7 @@ p, li, label {
     align-items: center;
     gap: 1rem;
     padding: 0.9rem 1.4rem;
-    background: var(--navy);
+    background: var(--bg-3);
     border-left: 3px solid var(--amber);
     border-radius: 0 8px 8px 0;
     margin-bottom: 1.5rem;
