@@ -832,7 +832,7 @@ Each object must have exactly these fields:
     "recommended_price": <number>,
     "action": "<one of: Promote / Reprice / Reposition / Remove / Keep>",
     "reasoning": "<2 sentence plain English explanation>",
-    "projected_monthly_impact": "<e.g. +GBP120/month or Neutral>"
+    "projected_monthly_impact": "<realistic range accounting for potential volume loss e.g. +GBP80 to +GBP160/month if volume holds, lower if price sensitive>"
 }}
 
 Rules:
@@ -842,6 +842,12 @@ Rules:
 "- Marginal: recommend removal, action = Remove"
 - Ideal food cost % is 28-35% of selling price
 - Be specific with numbers in reasoning
+- For any price increase, consider price sensitivity. If the item is a high-volume staple 
+  or everyday dish, customers are likely price sensitive — flag this risk explicitly in reasoning.
+- projected_monthly_impact must account for potential volume loss. Give a realistic range 
+  e.g. "+£80 to +£160/month depending on volume retention" rather than assuming flat volume.
+- If a price increase risks significant volume loss that could make the change net negative, 
+  say so clearly and suggest a smaller incremental increase instead.
 
 Return ONLY the JSON array. No markdown, no code fences, no explanation."""),
                 HumanMessage(content=f"Analyse this menu:\n\n{menu_summary}")
