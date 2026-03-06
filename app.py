@@ -1021,7 +1021,7 @@ Write the executive summary and top 3 priority actions for {restaurant}.""")
 </div>
 """, unsafe_allow_html=True)
         
-st.markdown("---")
+        st.markdown("---")
         st.markdown("""
 <p style="font-size:0.95rem; font-weight:600; color:#22314C; font-family:'DM Sans',sans-serif; margin-bottom:0.5rem;">
     How useful were these recommendations?
