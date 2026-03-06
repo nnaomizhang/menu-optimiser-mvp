@@ -539,6 +539,9 @@ with tab2:
             {"Item Name": "Baklava",            "Category": "Desserts", "Selling Price": 6.50,  "Food Cost": 1.80, "Monthly Sales": 60},
             {"Item Name": "House Wine (Glass)", "Category": "Drinks",   "Selling Price": 7.50,  "Food Cost": 2.20, "Monthly Sales": 180},
         ])
+        
+        st.caption("Monthly Sales column — estimate based on a typical month, does not need to be exact.")
+
         st.download_button(
             label="Download Template (CSV)",
             data=template_df.to_csv(index=False),
@@ -546,8 +549,6 @@ with tab2:
             mime="text/csv"
         )
         
-    st.caption("Monthly Sales column — estimate based on a typical month, does not need to be exact.")
-
     COLUMN_MAP = {
         "Item Name": "item_name", "Category": "category",
         "Selling Price": "current_price", "Food Cost": "food_cost",
