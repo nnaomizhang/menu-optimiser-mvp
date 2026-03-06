@@ -410,7 +410,7 @@ def generate_pdf(df, recommendations, summary):
 
 # Step 1: Manual Entry OR Upload ───────────────────────────────
 
-st.markdown('<div class="step-header">Step 1 — Enter Your Menu Data</div>', unsafe_allow_html=True)
+st.markdown('<div class="step-header">01 — Enter Your Menu Data</div>', unsafe_allow_html=True)
 
 st.markdown("""
 <div style="font-size:0.8rem; color:#7A7060; font-family:'DM Sans',sans-serif; 
@@ -446,7 +446,7 @@ with tab1:
             st.session_state["manual_items"][i]["item_name"] = st.text_input(
                 "Item Name" if i == 0 else " ",
                 value=item["item_name"],
-                placeholder="e.g. Grilled Halloumi",
+                placeholder="e.g. Lamb Kleftiko",
                 key=f"name_{i}",
                 label_visibility="visible" if i == 0 else "collapsed"
             )
@@ -618,7 +618,7 @@ if "df" in st.session_state:
 
 # Step 2: Menu Analysis ─────────────────────────────────────────────────────────────
 st.markdown("---")
-st.markdown('<div class="step-header">Step 2 — Menu Engineering Analysis</div>', unsafe_allow_html=True)
+st.markdown('<div class="step-header">02 — Menu Analysis</div>', unsafe_allow_html=True)
 
 if "df" not in st.session_state:
     st.warning("Please complete Step 1 first.")
@@ -628,8 +628,6 @@ else:
 
         median_margin = df["margin_pct"].median()
         median_units  = df["monthly_units_sold"].median()
-        
-        st.write(f"Thresholds — Margin: {median_margin:.2f}, Units: {median_units:.0f}")
 
         def classify(row):
             hm = row["margin_pct"]         >= median_margin
@@ -791,7 +789,7 @@ st.markdown("""
 
 # Step 3: AI Pricing Recommendation
 st.markdown("---")
-st.markdown('<div class="step-header">Step 3 — AI Pricing Recommendations</div>', unsafe_allow_html=True)
+st.markdown('<div class="step-header">03 — MenuMind Pricing Recommendations</div>', unsafe_allow_html=True)
 
 if "df" not in st.session_state or "classification" not in st.session_state["df"].columns:
     st.warning("Please complete Step 2 first.")
@@ -919,7 +917,7 @@ Return ONLY the JSON array. No markdown, no code fences, no explanation."""),
                 
 # Step 4: Generate a Report ──────────────────────────────────────────
 st.markdown("---")
-st.markdown('<div class="step-header">Step 4 — Download Full Report</div>', unsafe_allow_html=True)
+st.markdown('<div class="step-header">04 — Your Personalised Report</div>', unsafe_allow_html=True)
 
 if "recommendations" not in st.session_state:
     st.warning("Please complete Step 3 first.")
