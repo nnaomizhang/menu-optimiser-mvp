@@ -249,6 +249,28 @@ hr {
 </style>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+<div style="
+    background: #22314C;
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    border-radius: 0 0 12px 12px;
+">
+    <div style="font-size:0.7rem; letter-spacing:4px; text-transform:uppercase;
+                color:#8A9BB0; margin-bottom:0.8rem; font-family:'DM Sans',sans-serif;">
+        AI-Powered Restaurant Intelligence
+    </div>
+    <div style="font-family:'DM Sans',sans-serif; font-size:2.8rem; letter-spacing:-1px;
+                color:#EFE7D5; font-weight:700; margin-bottom:0.6rem;">
+        MenuMind
+    </div>
+    <div style="font-size:0.9rem; color:#8A9BB0; font-family:'DM Sans',sans-serif;
+                max-width:480px; margin:0 auto; line-height:1.6;">
+        Transform your menu data into precision pricing strategy.
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # PDF Generator 
 def clean_text(text: str) -> str:
