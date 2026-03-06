@@ -313,6 +313,7 @@ def clean_text(text: str) -> str:
         "\u201c": '"',   # left double quote "
         "\u201d": '"',   # right double quote "
         "\u2022": "-",   # bullet •
+        "\u00a3": "GBP", # £ sign
         "\u00e9": "e",   # é
         "\u00e8": "e",   # è
         "\u00ea": "e",   # ê
@@ -770,11 +771,43 @@ st.markdown('<div class="step-header">Step 3 — AI Pricing Recommendations</div
 
 if "df" not in st.session_state or "classification" not in st.session_state["df"].columns:
     st.warning("Please complete Step 2 first.")
-elif not llm:
-    st.error("Please enter your OpenAI API key in the sidebar.")
 else:
+    with st.expander("Add context for better recommendations (optional)"):
+        season = st.selectbox(
+            "Current season / trading period",
+            ["No preference", "Spring", "Summer", "Autumn", "Winter",
+             "Christmas & New Year", "Valentine's Day", "Easter"]
+        )
+        cuisine_type = st.text_input(
+            "Cuisine type",
+            placeholder="e.g. Greek, Italian, Modern British",
+        )
+        avg_spend = st.number_input(
+            "Average spend per head (£)",
+            min_value=0.0, step=1.0, value=0.0,
+            help="Leave at 0 if unknown"
+        )
+        competitors = st.text_input(
+            "Local competition notes",
+            placeholder="e.g. Two other Greek restaurants nearby, both charge £15-18 for mains",
+        )
+        other_context = st.text_area(
+            "Anything else we should know?",
+            placeholder="e.g. Planning a summer terrace menu, high wastage on fish dishes",
+            height=80
+        )
+
     if st.button("Generate Recommendations"):
         df = st.session_state["df"]
+        restaurant = st.session_state.get("restaurant_name", "the restaurant")
+        context_block = f"""
+Additional context:
+- Season / trading period: {season if season != 'No preference' else 'Not specified'}
+- Cuisine type: {cuisine_type or 'Not specified'}
+- Average spend per head: {'£' + str(int(avg_spend)) if avg_spend > 0 else 'Not specified'}
+- Local competition: {competitors or 'Not specified'}
+- Other notes: {other_context or 'None'}
+"""
         menu_summary = df[["item_name", "category", "current_price",
                             "food_cost", "margin_pct",
                             "monthly_units_sold", "classification"]
@@ -782,8 +815,13 @@ else:
 
         with st.spinner("Analysing with MenuMind..."):
             messages = [
-                SystemMessage(content="""You are an expert restaurant consultant 
-specialising in menu engineering and pricing strategy.
+                SystemMessage(content=f"""You are an expert restaurant consultant 
+specialising in menu engineering and pricing strategy for {restaurant}.
+
+{context_block}
+
+Use the above context to make recommendations seasonally and locally relevant.
+Tailor every recommendation to this specific restaurant's situation.
 
 Analyse the menu data and return ONLY a valid JSON array.
 Each object must have exactly these fields:
@@ -867,8 +905,6 @@ st.markdown('<div class="step-header">Step 4 — Download Full Report</div>', un
 
 if "recommendations" not in st.session_state:
     st.warning("Please complete Step 3 first.")
-elif not llm:
-    st.error("Please enter your OpenAI API key in the sidebar.")
 else:
     if st.button("Download Report Here"):
         df = st.session_state["df"]
