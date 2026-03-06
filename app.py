@@ -273,10 +273,15 @@ st.markdown("""
     Transform your menu data into precision pricing strategy
 </div>
 
-
-
 </div>
 """, unsafe_allow_html=True)
+
+st.markdown("<div style='height: 1rem'></div>", unsafe_allow_html=True)
+restaurant_name = st.text_input(
+    "Restaurant name",
+    placeholder="e.g. AGORA",
+    help="Used to personalise your report"
+)
 
 # PDF Generator 
 def clean_text(text: str) -> str:
