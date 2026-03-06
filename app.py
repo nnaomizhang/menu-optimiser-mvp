@@ -995,14 +995,15 @@ Write the executive summary and top 3 priority actions for {restaurant}.""")
             col3.metric("Staple",     counts.get("Staple",     0))
             col4.metric("Marginal",   counts.get("Marginal",   0))
 
-        # Download button
+# Download button
         st.download_button(
             label="Download Menu Optimisation Report (PDF)",
             data=st.session_state["pdf"],
             file_name="menu_optimisation_report.pdf",
             mime="application/pdf"
         )
-st.markdown("---")
+
+        st.markdown("---")
         st.markdown("""
 <div style="font-family:'DM Sans',sans-serif; margin-top: 1rem;">
     <p style="font-size:0.95rem; font-weight:600; color:#22314C; margin-bottom:0.8rem;">
