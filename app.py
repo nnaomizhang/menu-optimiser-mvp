@@ -85,7 +85,7 @@ header {visibility: hidden;}
 
 h1, h2, h3, h4 {
     font-family: 'DM Sans', sans-serif !important;
-    color: var(--navy) !important;
+    color: var(--bg-3) !important;
 }
 p, li, label {
     font-family: 'DM Sans', sans-serif !important;
