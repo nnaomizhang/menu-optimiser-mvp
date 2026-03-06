@@ -267,6 +267,20 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+<div style="
+    text-align: center;
+    font-size: 0.72rem;
+    color: #A09880;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+">
+    Complete all four steps in one session — your data is not saved between visits
+</div>
+""", unsafe_allow_html=True)
+
 # Introduce Context
 if "restaurant_name" not in st.session_state:
     st.markdown("""
@@ -988,4 +1002,36 @@ Write the executive summary and top 3 priority actions for {restaurant}.""")
             file_name="menu_optimisation_report.pdf",
             mime="application/pdf"
         )
-
+st.markdown("---")
+        st.markdown("""
+<div style="font-family:'DM Sans',sans-serif; margin-top: 1rem;">
+    <p style="font-size:0.95rem; font-weight:600; color:#22314C; margin-bottom:0.8rem;">
+        What to do next
+    </p>
+    <p style="font-size:0.85rem; color:#7A7060; line-height:1.8; margin-bottom:0.4rem;">
+        <strong style="color:#22314C;">1. Start with your Staple items.</strong> 
+        Small price increases on high-volume dishes have the biggest revenue impact 
+        with the lowest risk. Try a 5-10% increase first and monitor for 2-3 weeks.
+    </p>
+    <p style="font-size:0.85rem; color:#7A7060; line-height:1.8; margin-bottom:0.4rem;">
+        <strong style="color:#22314C;">2. Review Marginal items with your chef.</strong> 
+        Before removing anything, check for ingredient overlap with other dishes 
+        and consider whether the item has loyal regulars who would notice its absence.
+    </p>
+    <p style="font-size:0.85rem; color:#7A7060; line-height:1.8; margin-bottom:0.4rem;">
+        <strong style="color:#22314C;">3. Promote your Signature items.</strong> 
+        Position them prominently on your physical menu — top-right of each section 
+        is where the eye naturally lands. Add a short description if there isn't one.
+    </p>
+    <p style="font-size:0.85rem; color:#7A7060; line-height:1.8; margin-bottom:0.4rem;">
+        <strong style="color:#22314C;">4. Revisit in 4-6 weeks.</strong> 
+        Run this analysis again after making changes to measure the impact. 
+        Bring updated sales figures for the most accurate comparison.
+    </p>
+    <p style="font-size:0.75rem; color:#A09880; font-family:'DM Sans',sans-serif; 
+       margin-top:1rem; border-top: 1px solid #DDD8CE; padding-top:0.8rem;">
+       MenuMind recommendations are advisory only. Always apply your own judgment 
+       and knowledge of your customers before making pricing changes.
+    </p>
+</div>
+""", unsafe_allow_html=True)
