@@ -897,7 +897,6 @@ Recommendations summary: {json.dumps(recommendations[:5])}
 
 Write the executive summary and top 3 priority actions for {restaurant}.""")
             ]
-            ]
 
             try:
                 summary = llm.invoke(summary_messages).content.strip()
