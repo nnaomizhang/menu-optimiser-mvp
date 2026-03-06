@@ -600,7 +600,16 @@ if "df" in st.session_state:
         }),
         use_container_width=True
     )
-     
+
+st.markdown("""
+<p style="font-size:0.8rem; color:#7A7060; font-family:'DM Sans',sans-serif; 
+   border-left: 3px solid #B5703A; padding-left: 0.8rem; margin-bottom: 1rem;">
+   <strong>Food cost</strong> should reflect ingredients only — not labour or overheads. 
+   If you are unsure, use your best estimate. The more accurate your figures, 
+   the more reliable your recommendations will be.
+</p>
+""", unsafe_allow_html=True)
+
 # Step 2: Menu Analysis ─────────────────────────────────────────────────────────────
 st.markdown("---")
 st.markdown('<div class="step-header">Step 2 — Menu Engineering Analysis</div>', unsafe_allow_html=True)
