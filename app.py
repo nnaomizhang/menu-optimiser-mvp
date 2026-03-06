@@ -62,7 +62,7 @@ st.markdown("""
     --bg:          #F2F0EC;
     --bg-2:        #F2F0EC;
     --bg-3:        #E5E1D8;
-    --navy:        #22314C;
+    --navy:        #D4CFC4;
     --navy-light:  #2E4268;
     --navy-dim:    rgba(34,49,76,0.08);
     --ink:         #1A1A1A;
