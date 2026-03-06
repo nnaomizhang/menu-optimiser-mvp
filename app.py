@@ -56,6 +56,12 @@ st.sidebar.markdown("""
 # ── Custom Styling ────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
+
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+[data-testid="stToolbar"] {visibility: hidden;}
+
     .main { background-color: #FAFAF8; }
     .block-container { padding-top: 2rem; }
     h1 { color: #1A1A2E; font-family: Georgia, serif; }
@@ -77,6 +83,9 @@ st.markdown("""
         text-align: center;
         box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
+
+
+    
 </style>
 """, unsafe_allow_html=True)
 
