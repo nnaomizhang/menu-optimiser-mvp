@@ -199,7 +199,7 @@ uploaded_file = st.file_uploader(
     help="Must contain: item_name, category, current_price, food_cost, monthly_units_sold"
 )
 
-if st.button("✅ Validate Data", disabled=uploaded_file is None):
+if st.button("Validate Data", disabled=uploaded_file is None):
     try:
         if uploaded_file.name.endswith(".csv"):
             df_raw = pd.read_csv(uploaded_file)
