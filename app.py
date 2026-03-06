@@ -485,10 +485,10 @@ else:
 
         # ── Color Map ─────────────────────────────────────────────────────
         color_map = {
-            "Signature":  "#2ECC71",
-            "Speciality": "#3498DB",
-            "Staple":     "#F39C12",
-            "Marginal":   "#E74C3C"
+            "Signature":  "#2D6A4F",
+            "Speciality": "#22314C",
+            "Staple":     "#C47B2B",
+            "Marginal":   "#9B3A3A"
         }
 
         # ── Scatter Plot Matrix ───────────────────────────────────────────
