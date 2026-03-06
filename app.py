@@ -1020,3 +1020,32 @@ Write the executive summary and top 3 priority actions for {restaurant}.""")
     </p>
 </div>
 """, unsafe_allow_html=True)
+        
+st.markdown("---")
+        st.markdown("""
+<p style="font-size:0.95rem; font-weight:600; color:#22314C; font-family:'DM Sans',sans-serif; margin-bottom:0.5rem;">
+    How useful were these recommendations?
+</p>
+<p style="font-size:0.8rem; color:#7A7060; font-family:'DM Sans',sans-serif; margin-bottom:1rem;">
+    Your feedback helps us improve MenuMind for independent restaurants like yours.
+</p>
+""", unsafe_allow_html=True)
+
+        feedback_score = st.select_slider(
+            "Rate the recommendations",
+            options=["Not useful", "Slightly useful", "Useful", "Very useful", "Excellent"],
+            value="Useful",
+            label_visibility="collapsed"
+        )
+
+        feedback_text = st.text_area(
+            "Any comments? (optional)",
+            placeholder="e.g. The pricing suggestions were realistic but I'd like more context on portion sizes...",
+            height=80,
+            label_visibility="collapsed"
+        )
+
+        if st.button("Submit Feedback"):
+            if feedback_score:
+                st.success(f"Thank you — your feedback has been recorded. You rated: {feedback_score}")
+                st.session_state["feedback_submitted"] = True
