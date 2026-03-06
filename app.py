@@ -577,7 +577,7 @@ else:
         st.plotly_chart(fig, use_container_width=True)
 
         # ── Classification Guide ──────────────────────────────────────────
-        with st.expander("ℹ️ Classification Guide"):
+        with st.expander("Classification Guide"):
             st.markdown("""
 | Classification | Definition | Recommended Action |
 |---|---|---|
