@@ -60,7 +60,7 @@ st.markdown("""
 
 :root {
     --bg:          #F2F0EC;
-    --bg-2:        #E8DFC8;
+    --bg-2:        #F2F0EC;
     --bg-3:        #DFD5BE;
     --navy:        #22314C;
     --navy-light:  #2E4268;
