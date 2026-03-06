@@ -393,7 +393,7 @@ if st.button("Validate Data", disabled=uploaded_file is None):
             st.session_state["df"] = df_raw
             st.session_state.pop("recommendations", None)
             st.session_state.pop("summary", None)
-            st.success(f"✅ Data validated — {len(df_raw)} menu items loaded.")
+            st.success(f"Data validated — {len(df_raw)} menu items loaded.")
 
     except Exception as e:
         st.error(f"Failed to read file: {e}")
@@ -425,9 +425,9 @@ st.markdown("---")
 st.markdown('<div class="step-header">Step 2 — Menu Engineering Analysis</div>', unsafe_allow_html=True)
 
 if "df" not in st.session_state:
-    st.warning("⚠️ Please complete Step 1 first.")
+    st.warning("Please complete Step 1 first.")
 else:
-    if st.button("📊 Analyse Menu"):
+    if st.button("Analyse Menu"):
         df = st.session_state["df"]
 
         median_margin = df["margin_pct"].median()
@@ -587,9 +587,9 @@ st.markdown("---")
 st.markdown('<div class="step-header">Step 3 — AI Pricing Recommendations</div>', unsafe_allow_html=True)
 
 if "df" not in st.session_state or "classification" not in st.session_state["df"].columns:
-    st.warning("⚠️ Please complete Step 2 first.")
+    st.warning("Please complete Step 2 first.")
 elif not llm:
-    st.error("❌ Please enter your OpenAI API key in the sidebar.")
+    st.error("Please enter your OpenAI API key in the sidebar.")
 else:
     if st.button("🤖 Generate Recommendations"):
         df = st.session_state["df"]
@@ -633,7 +633,7 @@ Return ONLY the JSON array. No markdown, no code fences, no explanation."""),
                 response = re.sub(r"```$", "", response).strip()
                 recommendations = json.loads(response)
                 st.session_state["recommendations"] = recommendations
-                st.success("✅ Recommendations generated!")
+                st.success("Recommendations generated!")
             except Exception as e:
                 st.error(f"Failed to parse AI response: {e}")
 
@@ -655,6 +655,7 @@ Return ONLY the JSON array. No markdown, no code fences, no explanation."""),
             "Remove":     "🗑️",
             "Keep":       "✅"
         }
+        
         for rec in recommendations:
             action = rec.get("action", "Keep")
             color  = action_colors.get(action, "#95A5A6")
@@ -686,11 +687,11 @@ st.markdown("---")
 st.markdown('<div class="step-header">Step 4 — Download Full Report</div>', unsafe_allow_html=True)
 
 if "recommendations" not in st.session_state:
-    st.warning("⚠️ Please complete Step 3 first.")
+    st.warning("Please complete Step 3 first.")
 elif not llm:
-    st.error("❌ Please enter your OpenAI API key in the sidebar.")
+    st.error("Please enter your OpenAI API key in the sidebar.")
 else:
-    if st.button("📄 Generate PDF Report"):
+    if st.button("Generate PDF Report"):
         df = st.session_state["df"]
         recommendations = st.session_state["recommendations"]
 
@@ -721,7 +722,7 @@ Write the executive summary and top 3 priority actions.""")
 
                 pdf_data = generate_pdf(df, recommendations, summary)
                 st.session_state["pdf"] = pdf_data
-                st.success("✅ Report ready!")
+                st.success("Report ready!")
 
             except Exception as e:
                 st.error(f"Failed to generate report: {e}")
@@ -746,7 +747,7 @@ Write the executive summary and top 3 priority actions.""")
 
         # Download button
         st.download_button(
-            label="⬇️ Download Menu Optimisation Report (PDF)",
+            label="Download Menu Optimisation Report (PDF)",
             data=st.session_state["pdf"],
             file_name="menu_optimisation_report.pdf",
             mime="application/pdf"
