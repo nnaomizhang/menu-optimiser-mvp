@@ -416,6 +416,16 @@ def generate_pdf(df, recommendations, summary):
 
 st.markdown('<div class="step-header">Step 1 — Enter Your Menu Data</div>', unsafe_allow_html=True)
 
+st.markdown("""
+<div style="font-size:0.8rem; color:#7A7060; font-family:'DM Sans',sans-serif; 
+   border-left: 3px solid #B5703A; padding: 0.6rem 0.8rem; margin-bottom: 1.2rem;">
+   <strong>Before you start:</strong> Food cost should reflect ingredients only — not labour or overheads. 
+   Monthly Sales is how many of each item you sell in a typical month — an estimate is fine. 
+   If you are unsure of any figure, use your best guess. The more accurate your data, 
+   the more reliable your recommendations.
+</div>
+""", unsafe_allow_html=True)
+
 tab1, tab2 = st.tabs(["Enter Manually", "Upload Spreadsheet"])
 
 # ── TAB 1: Manual Entry ───────────────────────────────────────────────────────
@@ -539,8 +549,6 @@ with tab2:
             {"Item Name": "Baklava",            "Category": "Desserts", "Selling Price": 6.50,  "Food Cost": 1.80, "Monthly Sales": 60},
             {"Item Name": "House Wine (Glass)", "Category": "Drinks",   "Selling Price": 7.50,  "Food Cost": 2.20, "Monthly Sales": 180},
         ])
-        
-        st.caption("For 'Monthly Sales' column, estimate based on a typical month, does not need to be exact.")
 
         st.download_button(
             label="Download Template (CSV)",
