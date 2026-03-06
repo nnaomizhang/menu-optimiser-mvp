@@ -33,6 +33,9 @@ st.title("Restaurant Menu Optimiser")
 st.caption("Upload your menu data to get AI-powered pricing recommendations and margin optimisation.")
 
 # Sidebar 
+api_key = st.secrets.get("OPENAI_API_KEY")
+model = "gpt-4o"
+temperature = 0.2
 
 llm = ChatOpenAI(
     model=model,
