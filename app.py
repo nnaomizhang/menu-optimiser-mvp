@@ -546,7 +546,7 @@ with tab2:
             mime="text/csv"
         )
         
-        st.caption("Monthly Sales column — estimate based on a typical month, does not need to be exact.")
+    st.caption("Monthly Sales column — estimate based on a typical month, does not need to be exact.")
 
     COLUMN_MAP = {
         "Item Name": "item_name", "Category": "category",
