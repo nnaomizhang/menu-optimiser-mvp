@@ -591,7 +591,7 @@ if "df" not in st.session_state or "classification" not in st.session_state["df"
 elif not llm:
     st.error("Please enter your OpenAI API key in the sidebar.")
 else:
-    if st.button("🤖 Generate Recommendations"):
+    if st.button("Generate Recommendations"):
         df = st.session_state["df"]
         menu_summary = df[["item_name", "category", "current_price",
                             "food_cost", "margin_pct",
@@ -673,16 +673,13 @@ Return ONLY the JSON array. No markdown, no code fences, no explanation."""),
     <span style="background:{color}; color:white; padding:2px 8px; 
                  border-radius:4px; font-size:0.8rem;">{icon} {action}</span>
     &nbsp; <span style="color:#666; font-size:0.85rem;">{rec.get('classification','')}</span><br/>
-    <span style="font-size:0.9rem;">💷 {price_change} &nbsp;|&nbsp; 
+    <span style="font-size:0.9rem;"> {price_change} &nbsp;|&nbsp; 
     📊 {rec.get('projected_monthly_impact','N/A')}</span><br/>
     <span style="color:#555; font-size:0.85rem;">{rec.get('reasoning','')}</span>
 </div>
 """, unsafe_allow_html=True)
                 
 # Step 4: Generate a Report ──────────────────────────────────────────
-# ════════════════════════════════════════════════════════════════════════════
-# STEP 4 — REPORT GENERATION
-# ════════════════════════════════════════════════════════════════════════════
 st.markdown("---")
 st.markdown('<div class="step-header">Step 4 — Download Full Report</div>', unsafe_allow_html=True)
 
