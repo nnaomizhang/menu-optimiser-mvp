@@ -761,6 +761,10 @@ else:
             df[["item_name", "category", "current_price",
                 "margin_pct", "monthly_units_sold", "classification"]]
             .sort_values("classification")
+            .assign(
+            current_price=lambda df: df["current_price"].map("{:.2f}".format),
+            margin_pct=lambda df: df["margin_pct"].map("{:.2f}".format)
+            )
             .rename(columns={
                 "item_name":           "Item",
                 "category":            "Category",
@@ -922,7 +926,7 @@ st.markdown('<div class="step-header">04 — Your Personalised Report</div>', un
 if "recommendations" not in st.session_state:
     st.warning("Please complete Step 3 first.")
 else:
-    if st.button("Download Report Here"):
+    if st.button("Generate Your Report Here"):
         df = st.session_state["df"]
         recommendations = st.session_state["recommendations"]
 
@@ -1047,5 +1051,5 @@ Write the executive summary and top 3 priority actions for {restaurant}.""")
 
         if st.button("Submit Feedback"):
             if feedback_score:
-                st.success(f"Thank you — your feedback has been recorded. You rated: {feedback_score}")
+                st.success(f"Thank you — your feedback has been recorded!")
                 st.session_state["feedback_submitted"] = True
