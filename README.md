@@ -16,8 +16,8 @@ OPENAI_API_KEY=sk-your-key-here
 streamlit run app.py
 
 ## Usage
-- Upload your menu CSV file (see sample_menu.csv for format)
-- Follow the 4-step pipeline to validate, analyse, get recommendations, and download your report
+- Upload your menu CSV file or create manually
+- Follow the 4-step pipeline to validate, analyse, get recommendations, and download your personalised report
 
 ## Required CSV Columns
 - item_name
