@@ -1,0 +1,35 @@
+item_name,category,current_price,food_cost,monthly_units_sold
+Tzatziki,Meze,5.50,1.20,187
+Hummus,Meze,5.50,0.90,201
+Taramasalata,Meze,5.50,1.40,143
+Spanakopita,Meze,6.50,2.10,112
+Grilled Halloumi,Meze,8.50,3.20,158
+Dolmades,Meze,7.00,2.60,89
+Saganaki,Meze,8.00,2.80,67
+Kalamari,Starters,9.50,3.60,134
+Grilled Sardines,Starters,10.50,4.20,48
+Avgolemono Soup,Starters,7.50,2.10,71
+Chicken Souvlaki,Mains,14.50,4.80,176
+Pork Souvlaki,Mains,13.50,4.20,162
+Lamb Kleftiko,Mains,22.00,9.80,43
+Moussaka,Mains,16.00,5.60,119
+Beef Stifado,Mains,18.50,8.40,38
+Grilled Sea Bass,Mains,24.00,11.20,29
+Lamb Chops,Mains,26.00,12.80,34
+Pastitsio,Mains,15.00,5.20,88
+Vegetarian Moussaka,Mains,14.00,4.10,52
+Mixed Grill Platter,Mains,28.00,13.50,21
+Greek Salad,Sides,7.00,1.80,203
+Oregano Fries,Sides,4.50,0.90,241
+Pita Bread,Sides,2.50,0.40,318
+Roast Potatoes,Sides,4.00,0.95,167
+Baklava,Desserts,6.50,1.80,94
+Galaktoboureko,Desserts,6.50,2.20,41
+Loukoumades,Desserts,6.00,1.50,77
+Greek Yoghurt & Honey,Desserts,5.50,1.10,63
+House Red Wine (Glass),Drinks,7.50,2.20,198
+House White Wine (Glass),Drinks,7.50,2.10,211
+Mythos Beer,Drinks,5.50,1.60,287
+Ouzo,Drinks,4.50,0.90,143
+Soft Drink,Drinks,3.50,0.40,312
+Greek Coffee,Drinks,3.00,0.35,176
